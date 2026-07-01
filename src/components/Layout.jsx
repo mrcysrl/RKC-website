@@ -1,23 +1,6 @@
 // src/components/Layout.jsx
 import React from 'react';
 
-export const StripeBar = ({ count = 100 }) => {
-  return (
-    <div className="w-full h-1 overflow-hidden flex" style={{ background: "rgba(245,168,0,0.2)" }}>
-      {Array.from({ length: count }).map((_, i) => (
-        <div 
-          key={i} 
-          className="h-full w-6" 
-          style={{ 
-            background: i % 2 === 0 ? "#F5A800" : "rgba(245,168,0,0.3)", 
-            transform: "skewX(-20deg)" 
-          }} 
-        />
-      ))}
-    </div>
-  );
-};
-
 export const PageHero = ({ title, subtitle, imgUrl }) => {
   return (
     <section className="relative overflow-hidden" style={{ background: "#0F1A2E" }}>
