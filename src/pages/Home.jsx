@@ -1,4 +1,5 @@
 // src/pages/Home.jsx
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
@@ -16,10 +17,9 @@ import {
   MapPin,
 } from "lucide-react";
 import { PRODUCTS, NEWS } from "../data";
+import { fetchProducts, fetchNews } from "../services/api";
 import Button from "../components/ui/Button";
 import ProductCard from "../components/ui/ProductCard";
-
-// ❌ REMOVED serviceBadges array (no longer needed)
 
 const services = [
   { icon: <Settings size={18} />, label: "Industrial Automation" },
@@ -60,18 +60,68 @@ const stats = [
 ];
 
 export default function Home() {
-  const featured = PRODUCTS.slice(0, 3);
-  const latestNews = NEWS.slice(0, 3);
+  const [products, setProducts] = useState([]);
+  const [news, setNews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [useMockData, setUseMockData] = useState(false);
 
-  if (!PRODUCTS || PRODUCTS.length === 0) {
+  useEffect(() => {
+    async function loadData() {
+      try {
+        // Try to fetch from WordPress
+        const fetchedProducts = await fetchProducts();
+        const fetchedNews = await fetchNews();
+        
+        if (fetchedProducts.length > 0) {
+          setProducts(fetchedProducts);
+        } else {
+          // Fallback to mock data
+          setProducts(PRODUCTS);
+          setUseMockData(true);
+        }
+        
+        if (fetchedNews.length > 0) {
+          setNews(fetchedNews);
+        } else {
+          setNews(NEWS);
+          setUseMockData(true);
+        }
+      } catch (error) {
+        console.error('Error loading data, using mock data:', error);
+        setProducts(PRODUCTS);
+        setNews(NEWS);
+        setUseMockData(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    loadData();
+  }, []);
+
+  const featured = products.slice(0, 3);
+  const latestNews = news.slice(0, 3);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber mx-auto mb-4"></div>
+          <p className="text-slate-gray font-barlow">Loading content...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!products || products.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-steel-blue font-barlow-condensed">
-            Loading...
+            No Products Found
           </h1>
           <p className="text-slate-gray font-barlow">
-            Please check your data file.
+            {useMockData ? 'Using mock data.' : 'Please add products in WordPress.'}
           </p>
         </div>
       </div>
@@ -210,7 +260,7 @@ export default function Home() {
           </div>
 
           {/* Horizontal Scroll (smaller screens) */}
-          <div className="lg:hidden overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
+          <div className="lg:hidden overflow-x-auto py-4 -mx-4 px-4 scrollbar-hide">
             <div className="flex gap-4 min-w-max">
               {services.map((s, i) => (
                 <Link

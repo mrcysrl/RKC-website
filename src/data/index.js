@@ -1,4 +1,6 @@
 // src/data/index.js
+
+// ─── MOCK PRODUCTS ──────────────────────────────────────────────
 export const PRODUCTS = [
   {
     id: "vfd-siemens-7-5kw",
@@ -128,16 +130,18 @@ export const PRODUCTS = [
   },
 ];
 
+// ─── CATEGORIES ────────────────────────────────────────────────
 export const CATEGORIES = ["All", "Industrial Automation", "Renewable Energy", "Electrical Supply"];
 
 export const BRAND_NAMES = ["All Brands", "Siemens", "Mitsubishi Electric", "Canadian Solar", "Schneider Electric", "ABB", "Growatt"];
 
+// ─── MOCK NEWS ─────────────────────────────────────────────────
 export const NEWS = [
   {
     id: "solar-expansion",
     title: "RKC Expands Solar Panel Inventory with Canadian Solar Partnership",
     excerpt: "We are proud to announce an exclusive distribution agreement with Canadian Solar, adding over 200 new SKUs to our renewable energy catalog.",
-    body: "RKC Industrial Supply is thrilled to announce a strategic distribution partnership with Canadian Solar, one of the world’s largest and most innovative solar technology companies. This agreement positions RKC as an authorized distributor for the full HiKu and BiHiKu product lines in the Philippines. The partnership adds over 200 new solar panel SKUs – from 400Wp to 660Wp – across residential, commercial, and utility-scale product tiers. Our expanded inventory is now available for immediate delivery across Metro Manila and key provincial hubs.",
+    body: "RKC Industrial Supply is thrilled to announce a strategic distribution partnership with Canadian Solar, one of the world's largest and most innovative solar technology companies...",
     category: "Company News",
     date: "June 18, 2026",
     author: "RKC Sales Team",
@@ -147,7 +151,7 @@ export const NEWS = [
     id: "doe-renewable-targets",
     title: "Philippines DOE Accelerates Renewable Energy Targets for 2030",
     excerpt: "New government mandates set 35% renewable energy share by 2030, opening massive opportunities for solar and wind in industrial sectors.",
-    body: "The Department of Energy (DOE) has unveiled an updated National Renewable Energy Program (NREP) that raises the target to 35% by 2030, up from the previous 25%. This aggressive push is expected to drive significant investments in solar and wind projects, especially in industrial zones. RKC Industrial Supply is positioned to support this growth with our expanded solar inventory and engineering services.",
+    body: "The Department of Energy (DOE) has unveiled an updated National Renewable Energy Program (NREP) that raises the target to 35% by 2030...",
     category: "Industry",
     date: "May 30, 2026",
     author: "RKC Research Team",
@@ -157,7 +161,7 @@ export const NEWS = [
     id: "mitsubishi-plc-new",
     title: "New Mitsubishi iQ-R Series PLCs Now Available at RKC",
     excerpt: "The latest generation of Mitsubishi PLCs with expanded I/O and enhanced CC-Link IE connectivity is now in stock for immediate pickup.",
-    body: "RKC Industrial Supply is proud to announce the availability of the new Mitsubishi iQ-R Series PLCs. These next-generation controllers offer high-speed processing, flexible I/O expansion, and seamless integration with CC-Link IE networks. Ideal for complex automation projects in manufacturing, food processing, and water treatment. Stock is now available for immediate delivery.",
+    body: "RKC Industrial Supply is proud to announce the availability of the new Mitsubishi iQ-R Series PLCs...",
     category: "Products",
     date: "May 12, 2026",
     author: "RKC Automation Team",
@@ -167,7 +171,7 @@ export const NEWS = [
     id: "cebu-solar-project",
     title: "RKC Completes 500kWp Solar Installation for Cebu Manufacturing Plant",
     excerpt: "Our installation team successfully commissioned a 500kWp grid-tied solar system for a food processing facility in Cebu City.",
-    body: "RKC Industrial Supply's engineering team has successfully completed a 500kWp solar PV installation for a major food processing plant in Cebu City. The system, which uses Canadian Solar panels and Growatt inverters, is expected to reduce the facility's electricity costs by 40% and lower its carbon footprint by 300 tons annually. This project demonstrates RKC's capability to deliver large-scale industrial solar solutions.",
+    body: "RKC Industrial Supply's engineering team has successfully completed a 500kWp solar PV installation for a major food processing plant in Cebu City...",
     category: "Projects",
     date: "April 24, 2026",
     author: "RKC Projects Team",
@@ -177,7 +181,7 @@ export const NEWS = [
     id: "abb-mccb-stock",
     title: "ABB Tmax XT Series MCCBs Added to RKC Catalog",
     excerpt: "We now carry the complete ABB Tmax XT4 and XT5 molded case circuit breaker range, from 16A to 630A.",
-    body: "RKC Industrial Supply has expanded its electrical supply portfolio with the addition of the ABB Tmax XT series MCCBs. Available in ratings from 16A to 630A, these circuit breakers offer adjustable trip settings and high breaking capacities suitable for industrial and commercial applications. Stock is available now for immediate delivery.",
+    body: "RKC Industrial Supply has expanded its electrical supply portfolio with the addition of the ABB Tmax XT series MCCBs...",
     category: "Products",
     date: "April 8, 2026",
     author: "RKC Electrical Team",
@@ -186,8 +190,8 @@ export const NEWS = [
   {
     id: "automation-seminar",
     title: "RKC Hosts Free Industrial Automation Seminar for Engineers",
-    excerpt: "Over 80 engineers and plant managers attended RKC’s full-day automation seminar featuring Siemens and Mitsubishi technical experts.",
-    body: "RKC Industrial Supply recently hosted a free industrial automation seminar at its Quezon City headquarters. The event featured technical presentations from Siemens and Mitsubishi Electric, covering topics such as VFD selection, PLC programming, and SCADA integration. Attendees included engineers from various industries, who also had the opportunity to see live demos. The seminar was well-received and we plan to hold more events in the future.",
+    excerpt: "Over 80 engineers and plant managers attended RKC's full-day automation seminar featuring Siemens and Mitsubishi technical experts.",
+    body: "RKC Industrial Supply recently hosted a free industrial automation seminar at its Quezon City headquarters...",
     category: "Events",
     date: "March 15, 2026",
     author: "RKC Training Team",
@@ -197,6 +201,7 @@ export const NEWS = [
 
 export const NEWS_CATEGORIES = ["All", "Company News", "Industry", "Products", "Projects", "Events"];
 
+// ─── MOCK BRANDS ──────────────────────────────────────────────
 export const BRANDS = [
   {
     name: "Siemens",
@@ -241,3 +246,12 @@ export const BRANDS = [
     products: ["SPF Series Inverters", "Hybrid Inverters", "Battery Storage", "Monitoring Systems"],
   },
 ];
+
+// ─── MOCK CONSTANTS FOR WORDPRESS FALLBACK ────────────────────
+// These are aliases for the mock data, used when WordPress is unavailable
+export const MOCK_PRODUCTS = PRODUCTS;
+export const MOCK_NEWS = NEWS;
+export const MOCK_BRANDS = BRANDS;
+
+// ─── REMOVED: Duplicate export object ─────────────────────────
+// ❌ REMOVED: export { PRODUCTS, NEWS, CATEGORIES, BRAND_NAMES, NEWS_CATEGORIES, BRANDS };

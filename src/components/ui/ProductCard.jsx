@@ -15,12 +15,13 @@ const ProductCard = ({ product }) => {
           alt={product.name} 
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
         />
-        {product.badge && (
+        {/* Only show badge if it exists and is not null/empty */}
+        {product.badge && product.badge.trim() !== '' && (
           <div 
             className="absolute top-3 left-3 px-2.5 py-1 rounded text-xs font-bold font-barlow"
             style={{ 
-              background: product.badgeColor, 
-              color: product.badgeColor === "#F5A800" ? "#0F1A2E" : "#ffffff" 
+              background: product.badgeColor || '#F5A800', 
+              color: product.badgeColor === '#F5A800' ? '#0F1A2E' : '#ffffff' 
             }}
           >
             {product.badge}
@@ -28,7 +29,6 @@ const ProductCard = ({ product }) => {
         )}
       </div>
       
-      {/* Card Body - Flex column with flex-1 on content area */}
       <div className="p-5 flex flex-col flex-1">
         <p className="text-xs font-semibold uppercase tracking-widest font-barlow text-primary-blue flex-shrink-0">
           {product.category}
@@ -38,7 +38,6 @@ const ProductCard = ({ product }) => {
         </h3>
         <p className="text-xs font-barlow text-slate-gray mb-4 flex-shrink-0">Brand: {product.brand}</p>
         
-        {/* Spacer that pushes the button to the bottom */}
         <div className="flex-1" />
         
         <div className="flex items-center justify-between flex-shrink-0">
