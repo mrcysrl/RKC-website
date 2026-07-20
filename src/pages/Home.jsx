@@ -16,48 +16,26 @@ import {
   Mail,
   MapPin,
 } from "lucide-react";
-import { PRODUCTS, NEWS } from "../data";
+import { PRODUCTS, NEWS, HOMEPAGE } from "../data";
 import { fetchProducts, fetchNews } from "../services/api";
 import Button from "../components/ui/Button";
 import ProductCard from "../components/ui/ProductCard";
 
-const services = [
-  { icon: <Settings size={18} />, label: "Industrial Automation" },
-  { icon: <Sun size={18} />, label: "Renewable Energy" },
-  { icon: <Package size={18} />, label: "Installation Services" },
-  { icon: <Truck size={18} />, label: "Pick-up & Delivery" },
-  { icon: <Zap size={18} />, label: "Electrical Supply" },
-];
-
-const servicesList = [
-  {
-    icon: <Settings size={20} />,
-    title: "Industrial Automation",
-    desc: "Complete PLC programming, VFD installation, motor control, SCADA systems, and panel fabrication.",
-  },
-  {
-    icon: <Sun size={20} />,
-    title: "Renewable Energy",
-    desc: "On-grid and off-grid solar PV systems, battery storage, and energy monitoring solutions.",
-  },
-  {
-    icon: <Package size={20} />,
-    title: "Installation & Commissioning",
-    desc: "Expert site surveys, professional installation, testing, and after-sales support by certified engineers.",
-  },
-  {
-    icon: <Truck size={20} />,
-    title: "Pick-up & Delivery",
-    desc: "Nationwide logistics for industrial components — from Metro Manila to provincial job sites.",
-  },
-];
-
-const stats = [
-  { icon: <Star size={22} />, value: "500+", label: "Products in Stock" },
-  { icon: <Users size={22} />, value: "1,200+", label: "Clients Served" },
-  { icon: <Globe size={22} />, value: "18+", label: "Brand Partners" },
-  { icon: <Award size={22} />, value: "10+", label: "Years in Industry" },
-];
+// ─── Map icon strings to components ─────────────────────────────
+const getIcon = (iconName, size = 20) => {
+  const icons = {
+    Settings: <Settings size={size} />,
+    Sun: <Sun size={size} />,
+    Package: <Package size={size} />,
+    Truck: <Truck size={size} />,
+    Zap: <Zap size={size} />,
+    Star: <Star size={size} />,
+    Users: <Users size={size} />,
+    Globe: <Globe size={size} />,
+    Award: <Award size={size} />,
+  };
+  return icons[iconName] || null;
+};
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -68,18 +46,16 @@ export default function Home() {
   useEffect(() => {
     async function loadData() {
       try {
-        // Try to fetch from WordPress
         const fetchedProducts = await fetchProducts();
         const fetchedNews = await fetchNews();
-        
+
         if (fetchedProducts.length > 0) {
           setProducts(fetchedProducts);
         } else {
-          // Fallback to mock data
           setProducts(PRODUCTS);
           setUseMockData(true);
         }
-        
+
         if (fetchedNews.length > 0) {
           setNews(fetchedNews);
         } else {
@@ -87,7 +63,7 @@ export default function Home() {
           setUseMockData(true);
         }
       } catch (error) {
-        console.error('Error loading data, using mock data:', error);
+        console.error("Error loading data, using mock data:", error);
         setProducts(PRODUCTS);
         setNews(NEWS);
         setUseMockData(true);
@@ -95,7 +71,6 @@ export default function Home() {
         setLoading(false);
       }
     }
-    
     loadData();
   }, []);
 
@@ -121,12 +96,26 @@ export default function Home() {
             No Products Found
           </h1>
           <p className="text-slate-gray font-barlow">
-            {useMockData ? 'Using mock data.' : 'Please add products in WordPress.'}
+            {useMockData ? "Using mock data." : "Please add products in WordPress."}
           </p>
         </div>
       </div>
     );
   }
+
+  // ─── Destructure HOMEPAGE data ────────────────────────────────
+  const {
+    heroImage,
+    heroPill,
+    heroTitle,
+    heroSubtitle,
+    heroCtaPrimary,
+    heroCtaSecondary,
+    services,
+    servicesList,
+    stats,
+    whyChoose,
+  } = HOMEPAGE;
 
   return (
     <>
@@ -134,7 +123,7 @@ export default function Home() {
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-[#0A1628]">
           <img
-            src="https://images.unsplash.com/photo-1720036236697-018370867320?w=1920&h=1080&fit=crop&auto=format"
+            src={heroImage}
             alt="Industrial automation facility"
             className="w-full h-full object-cover opacity-40"
           />
@@ -158,7 +147,7 @@ export default function Home() {
               color: "#F5A800",
             }}
           >
-            <Zap size={11} /> Industrial Automation & Renewable Energy
+            <Zap size={11} /> {heroPill}
           </div>
 
           {/* Hero Headline */}
@@ -185,9 +174,7 @@ export default function Home() {
               fontWeight: 400,
             }}
           >
-            Your trusted partner for industrial automation components and
-            renewable energy solutions — delivering quality products, expert
-            installation, and reliable support across the Philippines.
+            {heroSubtitle}
           </p>
 
           {/* Buttons */}
@@ -207,7 +194,7 @@ export default function Home() {
                 e.currentTarget.style.background = "#F5A800";
               }}
             >
-              Browse Products <ArrowRight size={16} />
+              {heroCtaPrimary} <ArrowRight size={16} />
             </Link>
             <Link
               to="/rfq"
@@ -227,32 +214,29 @@ export default function Home() {
                 e.currentTarget.style.color = "rgba(255,255,255,0.9)";
               }}
             >
-              Request a Quote
+              {heroCtaSecondary}
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ── Services Strip – Responsive ── */}
+      {/* ── Services Strip ── */}
       <section className="relative py-8 md:py-12 overflow-hidden bg-gradient-to-br from-deep-navy to-steel-blue">
-        {/* Subtle diagonal pattern overlay */}
         <div
           className="absolute inset-0 pointer-events-none opacity-10"
           style={{
             backgroundImage: `repeating-linear-gradient(
-        45deg,
-        rgba(255,255,255,0.05) 0px,
-        rgba(255,255,255,0.05) 2px,
-        transparent 2px,
-        transparent 8px
-      )`,
+              45deg,
+              rgba(255,255,255,0.05) 0px,
+              rgba(255,255,255,0.05) 2px,
+              transparent 2px,
+              transparent 8px
+            )`,
           }}
         />
-        {/* Accent stripe at top */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-amber" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Heading */}
           <div className="text-center mb-6 md:mb-8">
             <p className="text-xs font-bold tracking-widest uppercase font-barlow text-amber">
               Explore Our Services
@@ -275,7 +259,7 @@ export default function Home() {
                       color: i === 0 ? "#0F1A2E" : "#F5A800",
                     }}
                   >
-                    {s.icon}
+                    {getIcon(s.icon, 18)}
                   </div>
                   <span className="text-xs font-semibold font-barlow text-center text-white/90 group-hover:text-amber transition-colors">
                     {s.label}
@@ -303,7 +287,7 @@ export default function Home() {
                     color: i === 0 ? "#0F1A2E" : "#F5A800",
                   }}
                 >
-                  {s.icon}
+                  {getIcon(s.icon, 18)}
                 </div>
                 <span className="text-sm font-semibold font-barlow text-center text-white/90 group-hover:text-amber transition-colors">
                   {s.label}
@@ -315,7 +299,7 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Scroll Hint (only visible below lg) */}
+          {/* Scroll Hint */}
           <div className="text-center mt-2 lg:hidden">
             <span className="text-[10px] text-white/40 font-barlow animate-pulse tracking-widest">
               ← SWIPE TO EXPLORE →
@@ -386,7 +370,7 @@ export default function Home() {
                     className="flex gap-4 p-5 rounded-xl transition-all duration-150 no-underline border border-steel-blue/10 bg-off-white hover:bg-[#EDF4FF] hover:border-steel-blue/25"
                   >
                     <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center bg-steel-blue text-amber">
-                      {s.icon}
+                      {getIcon(s.icon, 20)}
                     </div>
                     <div>
                       <h3 className="font-bold font-barlow-condensed text-lg sm:text-xl text-deep-navy">
@@ -453,32 +437,24 @@ export default function Home() {
 
       {/* ── Why Choose RKC ── */}
       <section className="relative overflow-hidden py-16 md:py-20 bg-gradient-to-br from-deep-navy to-steel-blue">
-        {/* Subtle diagonal pattern overlay */}
         <div
           className="absolute inset-0 pointer-events-none opacity-10"
           style={{
             backgroundImage: `repeating-linear-gradient(
-        45deg,
-        rgba(255,255,255,0.05) 0px,
-        rgba(255,255,255,0.05) 2px,
-        transparent 2px,
-        transparent 8px
-      )`,
+              45deg,
+              rgba(255,255,255,0.05) 0px,
+              rgba(255,255,255,0.05) 2px,
+              transparent 2px,
+              transparent 8px
+            )`,
           }}
         />
-
-        {/* Large blurry glow in the corner */}
         <div className="absolute -top-20 -right-20 w-96 h-96 bg-amber/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-primary-blue/10 rounded-full blur-3xl pointer-events-none" />
-
-        {/* Accent stripe at top */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-amber" />
-
-        {/* Accent stripe at bottom */}
         <div className="absolute bottom-0 left-0 right-0 h-1 bg-amber/30" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Section Header */}
           <div className="text-center mb-12 md:mb-16">
             <p className="text-xs sm:text-sm font-bold tracking-widest uppercase mb-2 font-barlow text-amber">
               Our Track Record
@@ -496,24 +472,18 @@ export default function Home() {
             <div className="w-16 h-1 bg-amber/50 mx-auto mt-4 rounded-full" />
           </div>
 
-          {/* Stats Grid */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-12">
             {stats.map((s) => (
               <div
                 key={s.label}
                 className="group text-center p-6 md:p-8 rounded-2xl transition-all duration-300 bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-amber/30 hover:scale-105 hover:shadow-2xl hover:shadow-amber/10"
               >
-                {/* Icon */}
                 <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 transition-all duration-300 bg-gradient-to-br from-amber to-yellow-400 text-deep-navy shadow-lg shadow-amber/30 group-hover:shadow-amber/50 group-hover:scale-110">
-                  {s.icon}
+                  {getIcon(s.icon, 22)}
                 </div>
-
-                {/* Value */}
                 <div className="text-white font-black font-barlow-condensed text-3xl md:text-5xl leading-none mb-1 tracking-tight">
                   {s.value}
                 </div>
-
-                {/* Label */}
                 <div className="text-sm md:text-base font-barlow text-white/70 group-hover:text-white/90 transition-colors">
                   {s.label}
                 </div>
@@ -521,13 +491,8 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Bottom 3 Pillars */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {[
-              "Authorized distributor for leading global brands",
-              "Certified engineers for installation & commissioning",
-              "Fast nationwide delivery with reliable logistics",
-            ].map((pt) => (
+            {whyChoose.map((pt) => (
               <div
                 key={pt}
                 className="group flex items-start gap-4 px-5 py-4 rounded-xl transition-all duration-300 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-amber/30 hover:shadow-xl hover:shadow-amber/5"
@@ -565,16 +530,12 @@ export default function Home() {
                   Request for Quotation
                 </h2>
                 <p className="text-sm sm:text-base font-barlow text-white/60 mb-8">
-                  Tell us what you need and our team will respond within 24
-                  hours.
+                  Tell us what you need and our team will respond within 24 hours.
                 </p>
                 {[
                   { icon: <Phone size={14} />, text: "+63 2 8888-1234" },
                   { icon: <Mail size={14} />, text: "sales@rkcindustrial.ph" },
-                  {
-                    icon: <MapPin size={14} />,
-                    text: "Quezon City, Metro Manila",
-                  },
+                  { icon: <MapPin size={14} />, text: "Quezon City, Metro Manila" },
                 ].map((c) => (
                   <div
                     key={c.text}
@@ -591,10 +552,7 @@ export default function Home() {
                     { label: "Full Name", placeholder: "Juan dela Cruz" },
                     { label: "Email Address", placeholder: "juan@company.com" },
                     { label: "Phone Number", placeholder: "+63 9XX XXX XXXX" },
-                    {
-                      label: "Product / Service",
-                      placeholder: "e.g. VFD Drive 7.5kW",
-                    },
+                    { label: "Product / Service", placeholder: "e.g. VFD Drive 7.5kW" },
                   ].map((f) => (
                     <div key={f.label}>
                       <label className="block text-xs sm:text-sm font-semibold mb-1.5 font-barlow text-deep-navy">

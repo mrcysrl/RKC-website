@@ -28,6 +28,10 @@ export default function Products() {
         const data = await fetchProducts();
         console.log('📦 Products data received:', data);
         
+        // Debug: Log all unique categories
+        const uniqueCategories = [...new Set(data.map(p => p.category))];
+        console.log('🏷️ Unique categories in products:', uniqueCategories);
+        
         if (data && data.length > 0) {
           setProducts(data);
           setFilteredProducts(data);
@@ -47,7 +51,6 @@ export default function Products() {
     loadProducts();
   }, []);
 
-
   // Apply filters and sorting
   useEffect(() => {
     let result = [...products];
@@ -62,14 +65,31 @@ export default function Products() {
       );
     }
 
-    // Category filter
+    // Category filter - improved matching
     if (category !== "All") {
-      result = result.filter(p => p.category === category);
+      console.log(`🔍 Filtering by category: "${category}"`);
+      result = result.filter(p => {
+        // Match exactly OR case-insensitive OR partial match
+        const match = p.category === category || 
+                      p.category?.toLowerCase() === category.toLowerCase() ||
+                      p.category?.includes(category);
+        if (match) {
+          console.log(`  ✅ Matched: "${p.category}"`);
+        } else {
+          console.log(`  ❌ Skipped: "${p.category}"`);
+        }
+        return match;
+      });
     }
 
     // Brand filter
     if (brand !== "All Brands") {
-      result = result.filter(p => p.brand === brand);
+      console.log(`🔍 Filtering by brand: "${brand}"`);
+      result = result.filter(p => {
+        const match = p.brand === brand || 
+                      p.brand?.toLowerCase() === brand.toLowerCase();
+        return match;
+      });
     }
 
     // Sorting
@@ -81,6 +101,7 @@ export default function Products() {
       result.sort((a, b) => a.name.localeCompare(b.name));
     }
 
+    console.log(`📊 Filtered products count: ${result.length}`);
     setFilteredProducts(result);
     setPage(1);
   }, [products, search, category, brand, sort]);

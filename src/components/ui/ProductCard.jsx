@@ -4,6 +4,22 @@ import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 
 const ProductCard = ({ product }) => {
+  // Determine stock status color
+  const getStockColor = (status) => {
+    switch (status) {
+      case 'In Stock':
+        return 'bg-green-100 text-green-700 border-green-200';
+      case 'Out of Stock':
+        return 'bg-red-100 text-red-700 border-red-200';
+      case 'Backorder':
+        return 'bg-amber-100 text-amber-700 border-amber-200';
+      case 'Pre-order':
+        return 'bg-blue-100 text-blue-700 border-blue-200';
+      default:
+        return 'bg-green-100 text-green-700 border-green-200';
+    }
+  };
+
   return (
     <Link 
       to={`/products/${product.id}`}
@@ -15,10 +31,10 @@ const ProductCard = ({ product }) => {
           alt={product.name} 
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
         />
-        {/* Only show badge if it exists and is not null/empty */}
+        {/* Badge - Product Badge (Best Seller, New Arrival, etc.) */}
         {product.badge && product.badge.trim() !== '' && (
           <div 
-            className="absolute top-3 left-3 px-2.5 py-1 rounded text-xs font-bold font-barlow"
+            className="absolute top-3 left-3 px-2.5 py-1 rounded text-xs font-bold font-barlow z-10"
             style={{ 
               background: product.badgeColor || '#F5A800', 
               color: product.badgeColor === '#F5A800' ? '#0F1A2E' : '#ffffff' 
@@ -27,6 +43,10 @@ const ProductCard = ({ product }) => {
             {product.badge}
           </div>
         )}
+        {/* Stock Status Badge */}
+        <div className={`absolute top-3 right-3 px-2.5 py-1 rounded text-xs font-bold font-barlow border ${getStockColor(product.stock)}`}>
+          {product.stock}
+        </div>
       </div>
       
       <div className="p-5 flex flex-col flex-1">
