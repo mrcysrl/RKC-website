@@ -15,10 +15,13 @@ export default function RFQ() {
     company: "",
     email: "",
     phone: "",
-    industry: "",
-    projectType: "",
+    address: "",
+    propertyType: "",
+    roofType: "",
+    avgBill: "",
+    interest: "",
     timeline: "",
-    budget: "",
+    hearAbout: "",
     notes: "",
   });
 
@@ -66,10 +69,13 @@ export default function RFQ() {
       company: form.company || "Not provided",
       email: form.email || "Not provided",
       phone: form.phone || "Not provided",
-      industry: form.industry || "Not selected",
-      projectType: form.projectType || "Not selected",
+      address: form.address || "Not provided",
+      propertyType: form.propertyType || "Not selected",
+      roofType: form.roofType || "Not selected",
+      avgBill: form.avgBill || "Not selected",
+      interest: form.interest || "Not selected",
       timeline: form.timeline || "Not selected",
-      budget: form.budget || "Not selected",
+      hearAbout: form.hearAbout || "Not selected",
       notes: form.notes || "None provided",
       items: itemSummary,
     };
@@ -94,10 +100,13 @@ export default function RFQ() {
           company: "",
           email: "",
           phone: "",
-          industry: "",
-          projectType: "",
+          address: "",
+          propertyType: "",
+          roofType: "",
+          avgBill: "",
+          interest: "",
           timeline: "",
-          budget: "",
+          hearAbout: "",
           notes: "",
         });
         setItems([{ id: Date.now(), product: "", brand: "", qty: "1", unit: "pcs" }]);
@@ -280,7 +289,7 @@ export default function RFQ() {
                         <div className="col-span-12 sm:col-span-6">
                           <input
                             type="text"
-                            placeholder={`Product ${idx + 1} (e.g. Siemens SINAMICS VFD)`}
+                            placeholder={`Product ${idx + 1} (e.g. Solar Panel)`}
                             value={item.product}
                             onChange={(e) => updateItem(item.id, "product", e.target.value)}
                             style={fieldStyle}
@@ -342,7 +351,7 @@ export default function RFQ() {
                   </h2>
                   <textarea
                     rows={4}
-                    placeholder="Delivery location, special requirements, site conditions, or any other details that will help us prepare a more accurate quote..."
+                    placeholder="Delivery location, special requirements, site conditions, or any other details..."
                     value={form.notes}
                     onChange={(e) => setForm({ ...form, notes: e.target.value })}
                     className="resize-none outline-none w-full"
