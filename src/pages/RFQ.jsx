@@ -50,19 +50,31 @@ export default function RFQ() {
     setIsSubmitting(true);
     setError(null);
 
-    // Prepare form data for Formspree
+    // ─── Format items for email ──────────────────────────────────
+    const itemSummary = items
+      .filter(item => item.product || item.brand)
+      .map(item => {
+        const product = item.product || "Unspecified product";
+        const brand = item.brand || "Unspecified brand";
+        return `${product} (${brand}) x${item.qty} ${item.unit}`;
+      })
+      .join('; ') || "No items requested";
+
+    // ─── Prepare form data for Formspree ────────────────────────
     const formData = {
-      name: form.name,
-      company: form.company,
-      email: form.email,
-      phone: form.phone,
-      industry: form.industry,
-      projectType: form.projectType,
-      timeline: form.timeline,
-      budget: form.budget,
-      notes: form.notes,
-      items: items.filter(item => item.product || item.brand),
+      name: form.name || "Not provided",
+      company: form.company || "Not provided",
+      email: form.email || "Not provided",
+      phone: form.phone || "Not provided",
+      industry: form.industry || "Not selected",
+      projectType: form.projectType || "Not selected",
+      timeline: form.timeline || "Not selected",
+      budget: form.budget || "Not selected",
+      notes: form.notes || "None provided",
+      items: itemSummary,
     };
+
+    console.log('📤 Sending to Formspree:', formData);
 
     try {
       const response = await fetch(RFQ_DATA.formEndpoint, {
@@ -94,6 +106,7 @@ export default function RFQ() {
         setError(errorData.error || "Something went wrong. Please try again.");
       }
     } catch (err) {
+      console.error("Form submission error:", err);
       setError("Failed to submit. Please check your internet connection.");
     } finally {
       setIsSubmitting(false);
@@ -352,7 +365,6 @@ export default function RFQ() {
             {/* ─── Sidebar ─────────────────────────────────────────── */}
             <div className="flex flex-col gap-5">
               {/* Contact Us Directly */}
-              {/* ── Contact Us Directly (Navy Blue Card) ── */}
               <div className="rounded-2xl p-6" style={{ background: "#1A3D6E" }}>
                 <p
                   className="text-xs font-bold tracking-widest uppercase mb-4"
