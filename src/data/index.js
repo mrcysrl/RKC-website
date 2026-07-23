@@ -558,7 +558,7 @@ export const CONTACT = {
 
 // ─── RFQ DATA ────────────────────────────────────────────────────
 export const RFQ_DATA = {
-  formEndpoint: "https://formspree.io/f/YOUR_ENDPOINT_HERE",
+  formEndpoint: "https://formspree.io/f/xwvgboqv",
   
   fields: {
     contact: [
