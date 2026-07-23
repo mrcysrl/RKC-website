@@ -1,7 +1,7 @@
 // src/services/api.js
 
 // Replace this with your actual WordPress URL
-const WORDPRESS_URL = "http://rkc-wordpress.local";
+const WORDPRESS_URL = "https://rkcindustrialph.com";
 
 // ─── BADGE MAPPING ─────────────────────────────────────────────
 
