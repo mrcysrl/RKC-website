@@ -31,7 +31,30 @@ export default function RFQ() {
 
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
   const [error, setError] = useState(null);
+
+  // ─── Validation Functions ──────────────────────────────────────
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePhone = (phone) => {
+    // Philippine phone numbers: 11 digits starting with 09, or 10 digits starting with 9
+    const cleanPhone = phone.replace(/\s/g, '');
+    const phoneRegex = /^(09|\+639|9)\d{9}$/;
+    return phoneRegex.test(cleanPhone);
+  };
+
+  const validateName = (name) => {
+    return name.trim().length >= 2;
+  };
+
+  const validateRequired = (value) => {
+    return value && value.trim() !== '';
+  };
 
   // ─── Handlers ──────────────────────────────────────────────────
   const addItem = () => {
@@ -50,8 +73,47 @@ export default function RFQ() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setErrors({});
     setError(null);
+
+    // ─── Validate Form ───────────────────────────────────────────
+
+    const newErrors = {};
+
+    // Required fields
+    if (!validateRequired(form.name)) {
+      newErrors.name = "Full Name is required";
+    } else if (!validateName(form.name)) {
+      newErrors.name = "Name must be at least 2 characters";
+    }
+
+    if (!validateRequired(form.email)) {
+      newErrors.email = "Email is required";
+    } else if (!validateEmail(form.email)) {
+      newErrors.email = "Please enter a valid email address (e.g., name@domain.com)";
+    }
+
+    if (!validateRequired(form.phone)) {
+      newErrors.phone = "Phone number is required";
+    } else if (!validatePhone(form.phone)) {
+      newErrors.phone = "Please enter a valid Philippine phone number (e.g., 09171234567 or +639171234567)";
+    }
+
+    // Optional but recommended fields
+    if (form.address && !validateRequired(form.address)) {
+      newErrors.address = "Please enter your address";
+    }
+
+    // If there are errors, stop submission
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      // Scroll to first error
+      const firstErrorField = document.querySelector('[data-error="true"]');
+      if (firstErrorField) {
+        firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
 
     // ─── Format items for email ──────────────────────────────────
     const itemSummary = items
@@ -63,7 +125,7 @@ export default function RFQ() {
       })
       .join('; ') || "No items requested";
 
-    // ─── Prepare form data for Formspree ────────────────────────
+    // ─── Prepare form data ────────────────────────────────────────
     const formData = {
       name: form.name || "Not provided",
       company: form.company || "Not provided",
@@ -83,6 +145,7 @@ export default function RFQ() {
     console.log('📤 Sending to Formspree:', formData);
 
     try {
+      setIsSubmitting(true);
       const response = await fetch(RFQ_DATA.formEndpoint, {
         method: "POST",
         headers: {
@@ -125,23 +188,23 @@ export default function RFQ() {
   const resetForm = () => {
     setSubmitted(false);
     setError(null);
+    setErrors({});
   };
 
-  const { contactInfo } = RFQ_DATA;
   const { phone, phoneAlt, email, emailSupport, address, hours } = CONTACT;
 
   // ─── Field Styles ──────────────────────────────────────────────
-  const fieldStyle = {
+  const fieldStyle = (hasError) => ({
     fontFamily: "'Barlow',sans-serif",
     background: "#F8F9FC",
-    border: "1.5px solid rgba(26,61,110,0.15)",
+    border: hasError ? "1.5px solid #d4183d" : "1.5px solid rgba(26,61,110,0.15)",
     color: "#0F1A2E",
     borderRadius: "0.5rem",
     padding: "0.625rem 0.875rem",
     fontSize: "0.875rem",
     width: "100%",
     outline: "none",
-  };
+  });
 
   const labelStyle = {
     fontFamily: "'Barlow',sans-serif",
@@ -150,6 +213,13 @@ export default function RFQ() {
     color: "#0F1A2E",
     display: "block",
     marginBottom: "0.375rem",
+  };
+
+  const errorStyle = {
+    fontFamily: "'Barlow',sans-serif",
+    fontSize: "0.75rem",
+    color: "#d4183d",
+    marginTop: "0.25rem",
   };
 
   // ─── Render ────────────────────────────────────────────────────
@@ -204,7 +274,7 @@ export default function RFQ() {
             
             {/* ─── Form ───────────────────────────────────────────── */}
             <div className="lg:col-span-2">
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} noValidate>
                 {error && (
                   <div className="mb-6 p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 font-barlow text-sm">
                     {error}
@@ -217,21 +287,86 @@ export default function RFQ() {
                     Contact Information
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {RFQ_DATA.fields.contact.map((f) => (
-                      <div key={f.key}>
-                        <label style={labelStyle}>{f.label} {f.required && <span className="text-amber">*</span>}</label>
-                        <input
-                          type={f.key === "email" ? "email" : "text"}
-                          placeholder={f.placeholder}
-                          required={f.required}
-                          value={form[f.key]}
-                          onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
-                          style={fieldStyle}
-                          onFocus={(e) => (e.target.style.borderColor = "#2E6BB0")}
-                          onBlur={(e) => (e.target.style.borderColor = "rgba(26,61,110,0.15)")}
-                        />
-                      </div>
-                    ))}
+                    {/* Full Name */}
+                    <div>
+                      <label style={labelStyle}>Full Name <span className="text-amber">*</span></label>
+                      <input
+                        type="text"
+                        placeholder="Juan dela Cruz"
+                        required
+                        value={form.name}
+                        onChange={(e) => setForm({ ...form, name: e.target.value })}
+                        style={fieldStyle(!!errors.name)}
+                        data-error={!!errors.name}
+                        onFocus={(e) => (e.target.style.borderColor = "#2E6BB0")}
+                        onBlur={(e) => (e.target.style.borderColor = errors.name ? "#d4183d" : "rgba(26,61,110,0.15)")}
+                      />
+                      {errors.name && <p style={errorStyle}>{errors.name}</p>}
+                    </div>
+
+                    {/* Company */}
+                    <div>
+                      <label style={labelStyle}>Company Name</label>
+                      <input
+                        type="text"
+                        placeholder="ABC Manufacturing Inc."
+                        value={form.company}
+                        onChange={(e) => setForm({ ...form, company: e.target.value })}
+                        style={fieldStyle(false)}
+                        onFocus={(e) => (e.target.style.borderColor = "#2E6BB0")}
+                        onBlur={(e) => (e.target.style.borderColor = "rgba(26,61,110,0.15)")}
+                      />
+                    </div>
+
+                    {/* Email */}
+                    <div>
+                      <label style={labelStyle}>Email Address <span className="text-amber">*</span></label>
+                      <input
+                        type="email"
+                        placeholder="juan@company.com"
+                        required
+                        value={form.email}
+                        onChange={(e) => setForm({ ...form, email: e.target.value })}
+                        style={fieldStyle(!!errors.email)}
+                        data-error={!!errors.email}
+                        onFocus={(e) => (e.target.style.borderColor = "#2E6BB0")}
+                        onBlur={(e) => (e.target.style.borderColor = errors.email ? "#d4183d" : "rgba(26,61,110,0.15)")}
+                      />
+                      {errors.email && <p style={errorStyle}>{errors.email}</p>}
+                    </div>
+
+                    {/* Phone */}
+                    <div>
+                      <label style={labelStyle}>Phone Number <span className="text-amber">*</span></label>
+                      <input
+                        type="tel"
+                        placeholder="09171234567"
+                        required
+                        value={form.phone}
+                        onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                        style={fieldStyle(!!errors.phone)}
+                        data-error={!!errors.phone}
+                        onFocus={(e) => (e.target.style.borderColor = "#2E6BB0")}
+                        onBlur={(e) => (e.target.style.borderColor = errors.phone ? "#d4183d" : "rgba(26,61,110,0.15)")}
+                      />
+                      {errors.phone && <p style={errorStyle}>{errors.phone}</p>}
+                    </div>
+
+                    {/* Address */}
+                    <div className="sm:col-span-2">
+                      <label style={labelStyle}>Home Address</label>
+                      <input
+                        type="text"
+                        placeholder="123 Street, Barangay, City"
+                        value={form.address}
+                        onChange={(e) => setForm({ ...form, address: e.target.value })}
+                        style={fieldStyle(!!errors.address)}
+                        data-error={!!errors.address}
+                        onFocus={(e) => (e.target.style.borderColor = "#2E6BB0")}
+                        onBlur={(e) => (e.target.style.borderColor = errors.address ? "#d4183d" : "rgba(26,61,110,0.15)")}
+                      />
+                      {errors.address && <p style={errorStyle}>{errors.address}</p>}
+                    </div>
                   </div>
                 </div>
 
@@ -247,7 +382,9 @@ export default function RFQ() {
                         <select
                           value={form[f.key]}
                           onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
-                          style={fieldStyle}
+                          style={fieldStyle(false)}
+                          onFocus={(e) => (e.target.style.borderColor = "#2E6BB0")}
+                          onBlur={(e) => (e.target.style.borderColor = "rgba(26,61,110,0.15)")}
                         >
                           <option value="">Select {f.label}</option>
                           {f.options.map((opt) => (
@@ -292,7 +429,9 @@ export default function RFQ() {
                             placeholder={`Product ${idx + 1} (e.g. Solar Panel)`}
                             value={item.product}
                             onChange={(e) => updateItem(item.id, "product", e.target.value)}
-                            style={fieldStyle}
+                            style={fieldStyle(false)}
+                            onFocus={(e) => (e.target.style.borderColor = "#2E6BB0")}
+                            onBlur={(e) => (e.target.style.borderColor = "rgba(26,61,110,0.15)")}
                           />
                         </div>
                         <div className="col-span-4 sm:col-span-2">
@@ -301,7 +440,9 @@ export default function RFQ() {
                             placeholder="Brand"
                             value={item.brand}
                             onChange={(e) => updateItem(item.id, "brand", e.target.value)}
-                            style={fieldStyle}
+                            style={fieldStyle(false)}
+                            onFocus={(e) => (e.target.style.borderColor = "#2E6BB0")}
+                            onBlur={(e) => (e.target.style.borderColor = "rgba(26,61,110,0.15)")}
                           />
                         </div>
                         <div className="col-span-3 sm:col-span-2">
@@ -311,14 +452,18 @@ export default function RFQ() {
                             placeholder="1"
                             value={item.qty}
                             onChange={(e) => updateItem(item.id, "qty", e.target.value)}
-                            style={fieldStyle}
+                            style={fieldStyle(false)}
+                            onFocus={(e) => (e.target.style.borderColor = "#2E6BB0")}
+                            onBlur={(e) => (e.target.style.borderColor = "rgba(26,61,110,0.15)")}
                           />
                         </div>
                         <div className="col-span-4 sm:col-span-2">
                           <select
                             value={item.unit}
                             onChange={(e) => updateItem(item.id, "unit", e.target.value)}
-                            style={fieldStyle}
+                            style={fieldStyle(false)}
+                            onFocus={(e) => (e.target.style.borderColor = "#2E6BB0")}
+                            onBlur={(e) => (e.target.style.borderColor = "rgba(26,61,110,0.15)")}
                           >
                             <option value="pcs">pcs</option>
                             <option value="sets">sets</option>
@@ -355,7 +500,9 @@ export default function RFQ() {
                     value={form.notes}
                     onChange={(e) => setForm({ ...form, notes: e.target.value })}
                     className="resize-none outline-none w-full"
-                    style={fieldStyle}
+                    style={fieldStyle(false)}
+                    onFocus={(e) => (e.target.style.borderColor = "#2E6BB0")}
+                    onBlur={(e) => (e.target.style.borderColor = "rgba(26,61,110,0.15)")}
                   />
                 </div>
 
