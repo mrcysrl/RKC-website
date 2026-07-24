@@ -4,18 +4,5 @@
       "source": "/(.*)",
       "destination": "/index.html"
     }
-  ],
-  "redirects": [
-    {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.rkcindustrialph.com"
-        }
-      ],
-      "destination": "https://rkcindustrialph.com/:path*",
-      "permanent": true
-    }
   ]
 }
