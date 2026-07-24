@@ -1,4 +1,3 @@
-// src/pages/Home.jsx
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -15,6 +14,7 @@ import {
   Phone,
   Mail,
   MapPin,
+  CheckCircle,
 } from "lucide-react";
 import { PRODUCTS, NEWS, HOMEPAGE } from "../data";
 import { fetchProducts, fetchNews } from "../services/api";
@@ -42,6 +42,17 @@ export default function Home() {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [useMockData, setUseMockData] = useState(false);
+
+  // ─── Quick Inquiry State ──────────────────────────────────────
+  const [quickInquiry, setQuickInquiry] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    productService: "",
+  });
+  const [quickInquirySubmitted, setQuickInquirySubmitted] = useState(false);
+  const [quickInquirySubmitting, setQuickInquirySubmitting] = useState(false);
+  const [quickInquiryError, setQuickInquiryError] = useState(null);
 
   useEffect(() => {
     async function loadData() {
@@ -74,6 +85,52 @@ export default function Home() {
     loadData();
   }, []);
 
+  // ─── Quick Inquiry Handler ─────────────────────────────────────
+  const handleQuickInquiry = async (e) => {
+    e.preventDefault();
+    setQuickInquirySubmitting(true);
+    setQuickInquiryError(null);
+
+    const formData = {
+      name: quickInquiry.name,
+      email: quickInquiry.email,
+      phone: quickInquiry.phone,
+      productService: quickInquiry.productService,
+    };
+
+    try {
+      const response = await fetch(HOMEPAGE.quickInquiryEndpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setQuickInquirySubmitted(true);
+        setQuickInquiry({ name: "", email: "", phone: "", productService: "" });
+        // Reset after 5 seconds
+        setTimeout(() => {
+          setQuickInquirySubmitted(false);
+        }, 5000);
+      } else {
+        const errorData = await response.json();
+        setQuickInquiryError(
+          errorData.error || "Something went wrong. Please try again.",
+        );
+      }
+    } catch (err) {
+      console.error("Quick inquiry error:", err);
+      setQuickInquiryError(
+        "Failed to submit. Please check your internet connection.",
+      );
+    } finally {
+      setQuickInquirySubmitting(false);
+    }
+  };
+
   const featured = products.slice(0, 3);
   const latestNews = news.slice(0, 3);
 
@@ -96,7 +153,9 @@ export default function Home() {
             No Products Found
           </h1>
           <p className="text-slate-gray font-barlow">
-            {useMockData ? "Using mock data." : "Please add products in WordPress."}
+            {useMockData
+              ? "Using mock data."
+              : "Please add products in WordPress."}
           </p>
         </div>
       </div>
@@ -107,7 +166,6 @@ export default function Home() {
   const {
     heroImage,
     heroPill,
-    heroTitle,
     heroSubtitle,
     heroCtaPrimary,
     heroCtaSecondary,
@@ -530,12 +588,16 @@ export default function Home() {
                   Request for Quotation
                 </h2>
                 <p className="text-sm sm:text-base font-barlow text-white/60 mb-8">
-                  Tell us what you need and our team will respond within 24 hours.
+                  Tell us what you need and our team will respond within 24
+                  hours.
                 </p>
                 {[
                   { icon: <Phone size={14} />, text: "+63 2 8888-1234" },
                   { icon: <Mail size={14} />, text: "sales@rkcindustrial.ph" },
-                  { icon: <MapPin size={14} />, text: "Quezon City, Metro Manila" },
+                  {
+                    icon: <MapPin size={14} />,
+                    text: "Quezon City, Metro Manila",
+                  },
                 ].map((c) => (
                   <div
                     key={c.text}
@@ -547,33 +609,79 @@ export default function Home() {
                 ))}
               </div>
               <div className="lg:col-span-3 p-8 lg:p-10">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                  {[
-                    { label: "Full Name", placeholder: "Juan dela Cruz" },
-                    { label: "Email Address", placeholder: "juan@company.com" },
-                    { label: "Phone Number", placeholder: "+63 9XX XXX XXXX" },
-                    { label: "Product / Service", placeholder: "e.g. VFD Drive 7.5kW" },
-                  ].map((f) => (
-                    <div key={f.label}>
-                      <label className="block text-xs sm:text-sm font-semibold mb-1.5 font-barlow text-deep-navy">
-                        {f.label}
-                      </label>
-                      <input
-                        type="text"
-                        placeholder={f.placeholder}
-                        className="w-full px-3.5 py-2.5 rounded-lg text-sm sm:text-base outline-none font-barlow bg-off-white border border-steel-blue/15 text-deep-navy focus:border-primary-blue transition"
-                      />
+                {quickInquiryError && (
+                  <div className="mb-4 p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 font-barlow text-sm">
+                    {quickInquiryError}
+                  </div>
+                )}
+
+                {quickInquirySubmitted ? (
+                  <div className="flex items-center gap-3 py-6">
+                    <CheckCircle size={28} className="text-primary-blue" />
+                    <div>
+                      <p className="font-bold font-barlow-condensed text-lg text-deep-navy">
+                        Inquiry Sent!
+                      </p>
+                      <p className="text-sm font-barlow text-slate-gray">
+                        Our team will contact you within 24 hours.
+                      </p>
                     </div>
-                  ))}
-                </div>
-                <textarea
-                  rows={3}
-                  placeholder="Quantity, specs, delivery location..."
-                  className="w-full px-3.5 py-2.5 rounded-lg text-sm sm:text-base outline-none resize-none mb-5 font-barlow bg-off-white border border-steel-blue/15 text-deep-navy focus:border-primary-blue transition"
-                />
-                <button className="w-full py-3.5 rounded-lg font-bold font-barlow-condensed text-lg tracking-wide bg-amber text-deep-navy hover:bg-opacity-90 transition">
-                  Submit Request for Quotation
-                </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleQuickInquiry}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                      {[
+                        {
+                          key: "name",
+                          label: "Full Name",
+                          placeholder: "Juan dela Cruz",
+                        },
+                        {
+                          key: "email",
+                          label: "Email Address",
+                          placeholder: "juan@company.com",
+                        },
+                        {
+                          key: "phone",
+                          label: "Phone Number",
+                          placeholder: "+63 9XX XXX XXXX",
+                        },
+                        {
+                          key: "productService",
+                          label: "Product / Service",
+                          placeholder: "e.g. VFD Drive 7.5kW",
+                        },
+                      ].map((f) => (
+                        <div key={f.key}>
+                          <label className="block text-xs font-semibold mb-1.5 font-barlow text-deep-navy">
+                            {f.label}
+                          </label>
+                          <input
+                            type={f.key === "email" ? "email" : "text"}
+                            placeholder={f.placeholder}
+                            value={quickInquiry[f.key]}
+                            onChange={(e) =>
+                              setQuickInquiry({
+                                ...quickInquiry,
+                                [f.key]: e.target.value,
+                              })
+                            }
+                            className="w-full px-3.5 py-2.5 rounded-lg text-sm outline-none font-barlow bg-off-white border border-steel-blue/15 text-deep-navy focus:border-primary-blue transition"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={quickInquirySubmitting}
+                      className="w-full py-3.5 rounded-lg font-bold font-barlow-condensed text-lg tracking-wide bg-amber text-deep-navy hover:bg-opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {quickInquirySubmitting
+                        ? "Submitting..."
+                        : "Submit Request for Quotation"}
+                    </button>
+                  </form>
+                )}
               </div>
             </div>
           </div>

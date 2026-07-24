@@ -29,11 +29,11 @@ import contactMap from "../assets/images/Contacts-map.jpg";
 export const HOMEPAGE = {
   heroImage: heroImage,
   heroPill: "Industrial Automation & Renewable Energy",
-  heroTitle: "Powering Industry, Energizing Tomorrow",
   heroSubtitle:
     "Your trusted partner for industrial automation components and renewable energy solutions — delivering quality products, expert installation, and reliable support across the Philippines.",
   heroCtaPrimary: "Browse Products",
   heroCtaSecondary: "Request a Quote",
+  quickInquiryEndpoint: "https://formspree.io/f/xykrnodr",
 
   services: [
     { icon: "Settings", label: "Industrial Automation" },
