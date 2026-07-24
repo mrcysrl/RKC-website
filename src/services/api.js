@@ -1,6 +1,3 @@
-// src/services/api.js
-
-// Replace this with your actual WordPress URL
 const WORDPRESS_URL = "https://rkcindustrialph.com";
 
 // ─── BADGE MAPPING ─────────────────────────────────────────────
@@ -58,9 +55,14 @@ async function fetchFromWP(endpoint) {
   try {
     console.log(`🔄 Fetching: ${WORDPRESS_URL}/wp-json/wp/v2/${endpoint}`);
     const response = await fetch(`${WORDPRESS_URL}/wp-json/wp/v2/${endpoint}`);
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    
+    if (!response.ok) {
+      console.warn(`⚠️ API request failed: ${response.status} - ${response.statusText}`);
+      return [];
+    }
+    
     const data = await response.json();
-    console.log(`✅ Fetched ${endpoint}:`, data.length || "data received");
+    console.log(`✅ Fetched ${endpoint}:`, data.length || 'data received');
     return data;
   } catch (error) {
     console.error(`❌ Error fetching ${endpoint}:`, error);
