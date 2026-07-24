@@ -15,7 +15,6 @@ import abbTmax from "../assets/images/ABB Tmax XT4 160A MCCB.jpg";
 import solarPanelCanada from "../assets/images/Solar Panel Canada.jpg";
 import seminar from "../assets/images/Seminar.jpg";
 
-
 // Services
 import solarPanel from "../assets/images/Solar Panel.jpg";
 import energyStorage from "../assets/images/Energy Storage.jpg";
@@ -26,16 +25,16 @@ import energyAudit from "../assets/images/Energy Audit.jpg";
 // Contact Page
 import contactMap from "../assets/images/Contacts-map.jpg";
 
-
 // ─── HOMEPAGE DATA ──────────────────────────────────────────────
 export const HOMEPAGE = {
   heroImage: heroImage,
   heroPill: "Industrial Automation & Renewable Energy",
   heroTitle: "Powering Industry, Energizing Tomorrow",
-  heroSubtitle: "Your trusted partner for industrial automation components and renewable energy solutions — delivering quality products, expert installation, and reliable support across the Philippines.",
+  heroSubtitle:
+    "Your trusted partner for industrial automation components and renewable energy solutions — delivering quality products, expert installation, and reliable support across the Philippines.",
   heroCtaPrimary: "Browse Products",
   heroCtaSecondary: "Request a Quote",
-  
+
   services: [
     { icon: "Settings", label: "Industrial Automation" },
     { icon: "Sun", label: "Renewable Energy" },
@@ -43,7 +42,7 @@ export const HOMEPAGE = {
     { icon: "Truck", label: "Pick-up & Delivery" },
     { icon: "Zap", label: "Electrical Supply" },
   ],
-  
+
   servicesList: [
     {
       icon: "Settings",
@@ -66,14 +65,14 @@ export const HOMEPAGE = {
       desc: "Nationwide logistics for industrial components — from Metro Manila to provincial job sites.",
     },
   ],
-  
+
   stats: [
     { icon: "Star", value: "500+", label: "Products in Stock" },
     { icon: "Users", value: "1,200+", label: "Clients Served" },
     { icon: "Globe", value: "18+", label: "Brand Partners" },
     { icon: "Award", value: "10+", label: "Years in Industry" },
   ],
-  
+
   whyChoose: [
     "Authorized distributor for leading global brands",
     "Certified engineers for installation & commissioning",
@@ -241,9 +240,11 @@ export const SERVICES = [
     id: "residential-solar",
     title: "Residential Solar Installation",
     icon: "Sun",
-    description: "Custom solar PV systems designed for your home — reduce your electricity bills by up to 80%.",
+    description:
+      "Custom solar PV systems designed for your home — reduce your electricity bills by up to 80%.",
     hero: "Solar Solutions for Your Home",
-    tagline: "We design and install solar panel systems for residential homes — from 3kWp starter systems to 20kWp+ full-home setups, helping you achieve energy independence.",
+    tagline:
+      "We design and install solar panel systems for residential homes — from 3kWp starter systems to 20kWp+ full-home setups, helping you achieve energy independence.",
     img: solarPanel,
     features: [
       "Custom solar PV system design for your home",
@@ -253,16 +254,23 @@ export const SERVICES = [
       "System monitoring and performance tracking",
       "25-year panel warranty, 10-year workmanship warranty",
     ],
-    industries: ["Homeowners", "Residential Communities", "Villas & Estates", "Small Businesses"],
+    industries: [
+      "Homeowners",
+      "Residential Communities",
+      "Villas & Estates",
+      "Small Businesses",
+    ],
     cta: "Get a Free Solar Assessment",
   },
   {
     id: "solar-battery-backup",
     title: "Battery Backup & Energy Storage",
     icon: "Battery",
-    description: "Store your solar energy for nighttime use or power outages — keep your home running when the grid goes down.",
+    description:
+      "Store your solar energy for nighttime use or power outages — keep your home running when the grid goes down.",
     hero: "Energy Storage for Homes",
-    tagline: "Pair your solar panels with battery storage to maximize savings and ensure reliable backup power during outages.",
+    tagline:
+      "Pair your solar panels with battery storage to maximize savings and ensure reliable backup power during outages.",
     img: energyStorage,
     features: [
       "Residential battery storage systems (Lithium-ion, LiFePO4)",
@@ -279,9 +287,11 @@ export const SERVICES = [
     id: "solar-assessment",
     title: "Free Solar Assessment",
     icon: "ClipboardCheck",
-    description: "Find out exactly how much you can save with solar — no obligation, no pressure, just honest advice.",
+    description:
+      "Find out exactly how much you can save with solar — no obligation, no pressure, just honest advice.",
     hero: "Know Your Solar Potential",
-    tagline: "Our team will visit your property, assess your roof, and provide a customized solar proposal with estimated savings.",
+    tagline:
+      "Our team will visit your property, assess your roof, and provide a customized solar proposal with estimated savings.",
     img: freeAssessment,
     features: [
       "On-site property assessment",
@@ -291,16 +301,22 @@ export const SERVICES = [
       "Estimated ROI and payback period calculation",
       "No pressure, no obligation",
     ],
-    industries: ["Homeowners", "Property Developers", "Residential Communities"],
+    industries: [
+      "Homeowners",
+      "Property Developers",
+      "Residential Communities",
+    ],
     cta: "Book Your Free Assessment",
   },
   {
     id: "solar-maintenance",
     title: "Solar Maintenance & Monitoring",
     icon: "Settings",
-    description: "Keep your solar system performing at its best with regular monitoring, cleaning, and maintenance services.",
+    description:
+      "Keep your solar system performing at its best with regular monitoring, cleaning, and maintenance services.",
     hero: "Protect Your Investment",
-    tagline: "Regular maintenance ensures your solar system operates at peak efficiency — maximizing your savings and extending system life.",
+    tagline:
+      "Regular maintenance ensures your solar system operates at peak efficiency — maximizing your savings and extending system life.",
     img: maintenance,
     features: [
       "Regular system performance monitoring",
@@ -310,16 +326,23 @@ export const SERVICES = [
       "System optimization and firmware updates",
       "Annual maintenance plans available",
     ],
-    industries: ["Homeowners", "Commercial Properties", "Schools", "Facilities"],
+    industries: [
+      "Homeowners",
+      "Commercial Properties",
+      "Schools",
+      "Facilities",
+    ],
     cta: "Schedule Maintenance",
   },
   {
     id: "solar-energy-audit",
     title: "Energy Efficiency Audit",
     icon: "Zap",
-    description: "Before going solar, find out how to reduce your electricity consumption — smaller system = bigger savings.",
+    description:
+      "Before going solar, find out how to reduce your electricity consumption — smaller system = bigger savings.",
     hero: "Maximize Your Solar Savings",
-    tagline: "Identify energy-wasting appliances and habits to reduce your electricity usage — so you can install a smaller, more cost-effective solar system.",
+    tagline:
+      "Identify energy-wasting appliances and habits to reduce your electricity usage — so you can install a smaller, more cost-effective solar system.",
     img: energyAudit,
     features: [
       "Professional energy consumption analysis",
@@ -329,7 +352,12 @@ export const SERVICES = [
       "Recommendations for energy reduction",
       "Tailored solar system sizing",
     ],
-    industries: ["Homeowners", "Condominiums", "Small Businesses", "Commercial Facilities"],
+    industries: [
+      "Homeowners",
+      "Condominiums",
+      "Small Businesses",
+      "Commercial Facilities",
+    ],
     cta: "Schedule an Audit",
   },
 ];
@@ -542,13 +570,15 @@ export const BRANDS = [
 
 // ─── CONTACT DATA ──────────────────────────────────────────────
 export const CONTACT = {
+  formEndpoint: "https://formspree.io/f/mrenyorg",
   phone: "+63 2 8888-1234",
   phoneAlt: "+63 917 888 5678",
   email: "sales@rkcindustrial.ph",
   emailSupport: "support@rkcindustrial.ph",
   address: "B42 L34 Evergreen Country, Brgy. Zapote, 4024 Biñan City, Laguna",
   mapImage: contactMap,
-  mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3862.365202189654!2d121.0807497!3d14.3089888!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397d4c0d0d0d0d0%3A0x0!2sB42%20L34%20Evergreen%20Country%2C%20Brgy.%20Zapote%2C%204024%20Bi%C3%B1an%20City%2C%20Laguna!5e0!3m2!1sen!2sph!4v1700000000000",
+  mapUrl:
+    "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3862.365202189654!2d121.0807497!3d14.3089888!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397d4c0d0d0d0d0%3A0x0!2sB42%20L34%20Evergreen%20Country%2C%20Brgy.%20Zapote%2C%204024%20Bi%C3%B1an%20City%2C%20Laguna!5e0!3m2!1sen!2sph!4v1700000000000",
   hours: {
     weekdays: "8:00 AM – 6:00 PM",
     saturday: "8:00 AM – 12:00 PM",
@@ -559,24 +589,108 @@ export const CONTACT = {
 // ─── RFQ DATA ────────────────────────────────────────────────────
 export const RFQ_DATA = {
   formEndpoint: "https://formspree.io/f/xwvgboqv",
-  
+
   fields: {
     contact: [
-      { key: "name", label: "Full Name", placeholder: "Juan dela Cruz", required: true },
-      { key: "email", label: "Email Address", placeholder: "juan@email.com", required: true },
-      { key: "phone", label: "Phone Number", placeholder: "+63 9XX XXX XXXX", required: true },
-      { key: "address", label: "Home Address", placeholder: "123 Street, Barangay, City", required: false },
+      {
+        key: "name",
+        label: "Full Name",
+        placeholder: "Juan dela Cruz",
+        required: true,
+      },
+      {
+        key: "email",
+        label: "Email Address",
+        placeholder: "juan@email.com",
+        required: true,
+      },
+      {
+        key: "phone",
+        label: "Phone Number",
+        placeholder: "+63 9XX XXX XXXX",
+        required: true,
+      },
+      {
+        key: "address",
+        label: "Home Address",
+        placeholder: "123 Street, Barangay, City",
+        required: false,
+      },
     ],
     project: [
-      { key: "propertyType", label: "Property Type", options: ["Single-family Home", "Duplex", "Townhouse", "Condominium", "Farm / Estate", "Commercial Building", "Industrial Facility"] },
-      { key: "roofType", label: "Roof Type", options: ["Concrete / Flat", "Metal / GI Sheet", "Clay Tile", "Concrete Tile", "N/A (Ground Mount)"] },
-      { key: "avgBill", label: "Average Monthly Electricity Bill (PHP)", options: ["Below ₱3,000", "₱3,000 – ₱5,000", "₱5,000 – ₱10,000", "₱10,000 – ₱20,000", "₱20,000 – ₱50,000", "Above ₱50,000"] },
-      { key: "interest", label: "What are you interested in?", options: ["Solar Panel Installation", "Battery Backup / Storage", "Solar + Battery Combo", "Just Exploring / Free Assessment", "Maintenance / Service", "Energy Efficiency Audit"] },
-      { key: "timeline", label: "When are you planning to install?", options: ["Immediately (ASAP)", "Within 1 month", "Within 3 months", "Within 6 months", "Just exploring for now"] },
-      { key: "hearAbout", label: "How did you hear about us?", options: ["Social Media (Facebook, TikTok, etc.)", "Google Search", "Family / Friends", "Community / HOA", "Other"] },
+      {
+        key: "propertyType",
+        label: "Property Type",
+        options: [
+          "Single-family Home",
+          "Duplex",
+          "Townhouse",
+          "Condominium",
+          "Farm / Estate",
+          "Commercial Building",
+          "Industrial Facility",
+        ],
+      },
+      {
+        key: "roofType",
+        label: "Roof Type",
+        options: [
+          "Concrete / Flat",
+          "Metal / GI Sheet",
+          "Clay Tile",
+          "Concrete Tile",
+          "N/A (Ground Mount)",
+        ],
+      },
+      {
+        key: "avgBill",
+        label: "Average Monthly Electricity Bill (PHP)",
+        options: [
+          "Below ₱3,000",
+          "₱3,000 – ₱5,000",
+          "₱5,000 – ₱10,000",
+          "₱10,000 – ₱20,000",
+          "₱20,000 – ₱50,000",
+          "Above ₱50,000",
+        ],
+      },
+      {
+        key: "interest",
+        label: "What are you interested in?",
+        options: [
+          "Solar Panel Installation",
+          "Battery Backup / Storage",
+          "Solar + Battery Combo",
+          "Just Exploring / Free Assessment",
+          "Maintenance / Service",
+          "Energy Efficiency Audit",
+        ],
+      },
+      {
+        key: "timeline",
+        label: "When are you planning to install?",
+        options: [
+          "Immediately (ASAP)",
+          "Within 1 month",
+          "Within 3 months",
+          "Within 6 months",
+          "Just exploring for now",
+        ],
+      },
+      {
+        key: "hearAbout",
+        label: "How did you hear about us?",
+        options: [
+          "Social Media (Facebook, TikTok, etc.)",
+          "Google Search",
+          "Family / Friends",
+          "Community / HOA",
+          "Other",
+        ],
+      },
     ],
   },
-  
+
   contactInfo: {
     phone: "+63 2 8888-1234",
     email: "solar@rkcindustrial.ph",
@@ -587,7 +701,7 @@ export const RFQ_DATA = {
       sunday: "Closed",
     },
   },
-  
+
   responseMessage: {
     title: "Thank You!",
     subtitle: "Your solar quote request has been received.",

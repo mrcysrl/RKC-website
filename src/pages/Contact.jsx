@@ -14,17 +14,53 @@ export default function Contact() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setForm({ name: "", email: "", phone: "", subject: "", message: "" });
-    }, 5000);
-  };
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   const { phone, phoneAlt, email, emailSupport, address, hours, mapImage } = CONTACT;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    const formData = {
+      name: form.name,
+      email: form.email,
+      phone: form.phone,
+      subject: form.subject,
+      message: form.message,
+    };
+
+    try {
+      const response = await fetch(CONTACT.formEndpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setSubmitted(true);
+        setForm({ name: "", email: "", phone: "", subject: "", message: "" });
+      } else {
+        const errorData = await response.json();
+        setSubmitError(errorData.error || "Something went wrong. Please try again.");
+      }
+    } catch (err) {
+      console.error("Form submission error:", err);
+      setSubmitError("Failed to submit. Please check your internet connection.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const resetForm = () => {
+    setSubmitted(false);
+    setSubmitError(null);
+  };
 
   const fieldStyle = {
     fontFamily: "'Barlow',sans-serif",
@@ -38,6 +74,37 @@ export default function Contact() {
     outline: "none",
   };
 
+  // ─── Render ────────────────────────────────────────────────────
+  if (submitted) {
+    return (
+      <>
+        <PageHero title="Contact Us" />
+        <section className="py-24 bg-off-white">
+          <div className="max-w-xl mx-auto px-4 text-center">
+            <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 bg-primary-blue/10">
+              <CheckCircle size={40} className="text-primary-blue" />
+            </div>
+            <h2 className="font-barlow-condensed text-3xl font-bold text-deep-navy mb-3">
+              Message Sent!
+            </h2>
+            <p className="text-lg font-barlow text-deep-navy mb-2">
+              Thank you for reaching out.
+            </p>
+            <p className="text-base font-barlow text-slate-gray mb-8">
+              Our team will get back to you shortly.
+            </p>
+            <button
+              onClick={resetForm}
+              className="px-6 py-3 rounded-lg font-barlow-condensed font-bold text-sm bg-amber text-deep-navy hover:bg-opacity-90 transition"
+            >
+              Send Another Message
+            </button>
+          </div>
+        </section>
+      </>
+    );
+  }
+
   return (
     <>
       <PageHero
@@ -45,7 +112,7 @@ export default function Contact() {
         subtitle="Have a question, project inquiry, or need technical support? We're here to help."
       />
 
-      <section className="py-12" style={{ background: "#F8F9FC" }}>
+      <section className="py-12 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* ── Contact Cards ── */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-14">
@@ -114,13 +181,12 @@ export default function Contact() {
               >
                 <img
                   src={mapImage}
-                  alt="RKC Industrial Supply location - Biñan City, Laguna"
+                  alt="RKC Industrial Supply location"
                   className="w-full h-full object-cover"
                 />
-                {/* ── Navy Blue Overlay ── */}
-                <div 
+                <div
                   className="absolute inset-0 flex flex-col items-center justify-center"
-                  style={{ background: "rgba(15, 26, 46, 0.80)" }}
+                  style={{ background: "rgba(15, 26, 46, 0.75)" }}
                 >
                   <div
                     className="w-12 h-12 rounded-full flex items-center justify-center mb-3"
@@ -135,13 +201,7 @@ export default function Contact() {
                       fontSize: "1rem",
                     }}
                   >
-                    B42 L34 Evergreen Country
-                  </p>
-                  <p
-                    className="text-xs text-center text-white/80"
-                    style={{ fontFamily: "'Barlow',sans-serif" }}
-                  >
-                    Brgy. Zapote, 4024 Biñan City, Laguna
+                    {address}
                   </p>
                   <a
                     href="https://www.google.com/maps/search/B42+L34+Evergreen+Country+Brgy.+Zapote+4024+Biñan+City+Laguna"
@@ -226,87 +286,20 @@ export default function Contact() {
                 </div>
 
                 <div className="p-6 sm:p-8">
-                  {submitted ? (
-                    <div className="text-center py-10">
-                      <div
-                        className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5"
-                        style={{ background: "rgba(46,107,176,0.1)" }}
-                      >
-                        <CheckCircle size={32} style={{ color: "#2E6BB0" }} />
-                      </div>
-                      <h3
-                        className="font-bold mb-2"
-                        style={{
-                          fontFamily: "'Barlow Condensed',sans-serif",
-                          fontSize: "1.4rem",
-                          color: "#0F1A2E",
-                        }}
-                      >
-                        Message Sent!
-                      </h3>
-                      <p
-                        className="text-sm mb-6"
-                        style={{ fontFamily: "'Barlow',sans-serif", color: "#6B7794" }}
-                      >
-                        Thank you, {form.name}. We'll get back to you shortly.
-                      </p>
-                      <button
-                        onClick={() => {
-                          setSubmitted(false);
-                          setForm({
-                            name: "",
-                            email: "",
-                            phone: "",
-                            subject: "",
-                            message: "",
-                          });
-                        }}
-                        className="px-6 py-2.5 rounded-lg font-bold text-sm"
-                        style={{
-                          fontFamily: "'Barlow Condensed',sans-serif",
-                          fontSize: "1rem",
-                          background: "#1A3D6E",
-                          color: "#ffffff",
-                        }}
-                      >
-                        Send Another Message
-                      </button>
+                  {submitError && (
+                    <div className="mb-4 p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 font-barlow text-sm">
+                      {submitError}
                     </div>
-                  ) : (
-                    <form onSubmit={handleSubmit}>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                        {[
-                          { key: "name", label: "Full Name *", placeholder: "Juan dela Cruz", required: true },
-                          { key: "email", label: "Email Address *", placeholder: "juan@company.com", required: true },
-                          { key: "phone", label: "Phone Number", placeholder: "+63 9XX XXX XXXX", required: false },
-                        ].map((f) => (
-                          <div key={f.key} className={f.key === "phone" ? "sm:col-span-2" : ""}>
-                            <label
-                              className="block text-xs font-semibold mb-1.5"
-                              style={{
-                                fontFamily: "'Barlow',sans-serif",
-                                color: "#0F1A2E",
-                              }}
-                            >
-                              {f.label}
-                            </label>
-                            <input
-                              type={f.key === "email" ? "email" : "text"}
-                              placeholder={f.placeholder}
-                              required={f.required}
-                              value={form[f.key]}
-                              onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
-                              style={fieldStyle}
-                              onFocus={(e) => {
-                                e.target.style.borderColor = "#2E6BB0";
-                              }}
-                              onBlur={(e) => {
-                                e.target.style.borderColor = "rgba(26,61,110,0.15)";
-                              }}
-                            />
-                          </div>
-                        ))}
-                        <div className="sm:col-span-2">
+                  )}
+
+                  <form onSubmit={handleSubmit}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                      {[
+                        { key: "name", label: "Full Name *", placeholder: "Juan dela Cruz", required: true },
+                        { key: "email", label: "Email Address *", placeholder: "juan@company.com", required: true },
+                        { key: "phone", label: "Phone Number", placeholder: "+63 9XX XXX XXXX", required: false },
+                      ].map((f) => (
+                        <div key={f.key} className={f.key === "phone" ? "sm:col-span-2" : ""}>
                           <label
                             className="block text-xs font-semibold mb-1.5"
                             style={{
@@ -314,32 +307,25 @@ export default function Contact() {
                               color: "#0F1A2E",
                             }}
                           >
-                            Subject *
+                            {f.label}
                           </label>
-                          <select
-                            required
-                            value={form.subject}
-                            onChange={(e) => setForm({ ...form, subject: e.target.value })}
+                          <input
+                            type={f.key === "email" ? "email" : "text"}
+                            placeholder={f.placeholder}
+                            required={f.required}
+                            value={form[f.key]}
+                            onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
                             style={fieldStyle}
-                          >
-                            <option value="">Select a Subject</option>
-                            {[
-                              "Product Inquiry",
-                              "Request for Quotation",
-                              "Technical Support",
-                              "Installation Service",
-                              "Delivery / Logistics",
-                              "Partnership",
-                              "Other",
-                            ].map((s) => (
-                              <option key={s} value={s}>
-                                {s}
-                              </option>
-                            ))}
-                          </select>
+                            onFocus={(e) => {
+                              e.target.style.borderColor = "#2E6BB0";
+                            }}
+                            onBlur={(e) => {
+                              e.target.style.borderColor = "rgba(26,61,110,0.15)";
+                            }}
+                          />
                         </div>
-                      </div>
-                      <div className="mb-6">
+                      ))}
+                      <div className="sm:col-span-2">
                         <label
                           className="block text-xs font-semibold mb-1.5"
                           style={{
@@ -347,45 +333,79 @@ export default function Contact() {
                             color: "#0F1A2E",
                           }}
                         >
-                          Message *
+                          Subject *
                         </label>
-                        <textarea
-                          rows={5}
+                        <select
                           required
-                          placeholder="Describe your inquiry, project requirements, or any questions..."
-                          value={form.message}
-                          onChange={(e) => setForm({ ...form, message: e.target.value })}
-                          className="resize-none outline-none"
+                          value={form.subject}
+                          onChange={(e) => setForm({ ...form, subject: e.target.value })}
                           style={fieldStyle}
-                          onFocus={(e) => {
-                            e.target.style.borderColor = "#2E6BB0";
-                          }}
-                          onBlur={(e) => {
-                            e.target.style.borderColor = "rgba(26,61,110,0.15)";
-                          }}
-                        />
+                        >
+                          <option value="">Select a Subject</option>
+                          {[
+                            "Product Inquiry",
+                            "Request for Quotation",
+                            "Technical Support",
+                            "Installation Service",
+                            "Delivery / Logistics",
+                            "Partnership",
+                            "Other",
+                          ].map((s) => (
+                            <option key={s} value={s}>
+                              {s}
+                            </option>
+                          ))}
+                        </select>
                       </div>
-                      <button
-                        type="submit"
-                        className="w-full py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all"
+                    </div>
+                    <div className="mb-6">
+                      <label
+                        className="block text-xs font-semibold mb-1.5"
                         style={{
-                          fontFamily: "'Barlow Condensed',sans-serif",
-                          fontSize: "1rem",
-                          letterSpacing: "0.05em",
-                          background: "#F5A800",
+                          fontFamily: "'Barlow',sans-serif",
                           color: "#0F1A2E",
                         }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background = "#e69900";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background = "#F5A800";
-                        }}
                       >
-                        <Send size={16} /> Send Message
-                      </button>
-                    </form>
-                  )}
+                        Message *
+                      </label>
+                      <textarea
+                        rows={5}
+                        required
+                        placeholder="Describe your inquiry, project requirements, or any questions..."
+                        value={form.message}
+                        onChange={(e) => setForm({ ...form, message: e.target.value })}
+                        className="resize-none outline-none w-full"
+                        style={fieldStyle}
+                        onFocus={(e) => {
+                          e.target.style.borderColor = "#2E6BB0";
+                        }}
+                        onBlur={(e) => {
+                          e.target.style.borderColor = "rgba(26,61,110,0.15)";
+                        }}
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all"
+                      style={{
+                        fontFamily: "'Barlow Condensed',sans-serif",
+                        fontSize: "1rem",
+                        letterSpacing: "0.05em",
+                        background: "#F5A800",
+                        color: "#0F1A2E",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = "#e69900";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = "#F5A800";
+                      }}
+                    >
+                      {isSubmitting ? "Sending..." : "Send Message"}
+                      {!isSubmitting && <Send size={16} />}
+                    </button>
+                  </form>
                 </div>
               </div>
             </div>
