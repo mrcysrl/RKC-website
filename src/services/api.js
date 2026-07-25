@@ -1,7 +1,10 @@
 // ─── IMPORT MOCK DATA FROM INDEX.JS ────────────────────────────
 import { MOCK_PRODUCTS, MOCK_NEWS } from '../data/index.js';
 
-const WORDPRESS_URL = "https://rkcindustrialph.com";
+// Use environment variable for API URL
+// In development: uses full URL for local testing
+// In production: uses empty string for relative URLs (Vercel proxy handles it)
+const WORDPRESS_URL = import.meta.env.DEV ? "https://rkcindustrialph.com" : "";
 
 // ─── BADGE MAPPING ─────────────────────────────────────────────
 
@@ -46,6 +49,7 @@ function sanitizeJSON(str) {
 async function fetchFromWP(endpoint, retries = 3) {
   const separator = endpoint.includes('?') ? '&' : '?';
   const cacheBustedEndpoint = `${endpoint}${separator}_=${Date.now()}`;
+  // Use relative URL - Vercel proxy will handle the routing
   const url = `${WORDPRESS_URL}/wp-json/wp/v2/${cacheBustedEndpoint}`;
   
   console.log(`🔍 [DEBUG] Attempting to fetch: ${url}`);
@@ -54,9 +58,7 @@ async function fetchFromWP(endpoint, retries = 3) {
     try {
       console.log(`🔄 Attempt ${attempt}/${retries}...`);
       
-      // REMOVED: cache-control headers that cause CORS issues
       const response = await fetch(url, {
-        // Only use simple headers that don't trigger CORS preflight
         headers: {
           'Accept': 'application/json',
         },
