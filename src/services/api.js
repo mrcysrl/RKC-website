@@ -1,6 +1,8 @@
 // ─── IMPORT MOCK DATA FROM INDEX.JS ────────────────────────────
 import { MOCK_PRODUCTS, MOCK_NEWS } from '../data/index.js';
 
+const WORDPRESS_URL = "https://rkcindustrialph.com";
+
 // ─── BADGE MAPPING ─────────────────────────────────────────────
 
 const BADGE_MAP = {
