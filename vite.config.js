@@ -24,11 +24,19 @@ export default defineConfig({
   build: {
     // Generate source maps for debugging
     sourcemap: true,
-    // Optimize chunk size
+    // Optimize chunk size - FIXED: manualChunks as function
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
+        manualChunks: (id) => {
+          // Split vendor chunks
+          if (id.includes('node_modules')) {
+            // React and React DOM in their own chunk
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+              return 'vendor';
+            }
+            // Everything else in a separate vendor chunk
+            return 'vendor';
+          }
         },
       },
     },
