@@ -4,4 +4,38 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  
+  // Server configuration for development
+  server: {
+    host: true, // Force DNS resolution
+    port: 5173,
+    // Proxy API requests to avoid CORS issues in development
+    proxy: {
+      '/wp-json': {
+        target: 'https://rkcindustrialph.com',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/wp-json/, '/wp-json')
+      }
+    }
+  },
+  
+  // Build configuration
+  build: {
+    // Generate source maps for debugging
+    sourcemap: true,
+    // Optimize chunk size
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+        },
+      },
+    },
+  },
+  
+  // Optimize dependencies
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom'],
+  },
 })
