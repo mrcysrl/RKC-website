@@ -4,6 +4,14 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Calendar, User } from 'lucide-react';
 
 const NewsCard = ({ article, featured = false }) => {
+  // Fallback image
+  const fallbackImage = "https://via.placeholder.com/800x400?text=No+Image";
+
+  // Handle image error
+  const handleImageError = (e) => {
+    e.target.src = fallbackImage;
+  };
+
   if (featured) {
     // Featured Article - Large format
     return (
@@ -15,9 +23,10 @@ const NewsCard = ({ article, featured = false }) => {
           {/* Image - Fixed aspect ratio */}
           <div className="h-64 lg:h-[300px] bg-[#EDF0F6] overflow-hidden flex-shrink-0">
             <img
-              src={article.img}
+              src={article.img || fallbackImage}
               alt={article.title}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              onError={handleImageError}
             />
           </div>
           {/* Content */}
@@ -64,9 +73,10 @@ const NewsCard = ({ article, featured = false }) => {
       {/* Image - Fixed height */}
       <div className="h-48 bg-[#EDF0F6] overflow-hidden flex-shrink-0">
         <img
-          src={article.img}
+          src={article.img || fallbackImage}
           alt={article.title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          onError={handleImageError}
         />
       </div>
       {/* Content */}

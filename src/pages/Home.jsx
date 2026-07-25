@@ -134,6 +134,9 @@ export default function Home() {
   const featured = products.slice(0, 3);
   const latestNews = news.slice(0, 3);
 
+  // Fallback image
+  const fallbackImage = "https://via.placeholder.com/600x400?text=No+Image";
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">

@@ -16,6 +16,9 @@ export default function ProductDetail() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", qty: "1", message: "" });
   const [submitted, setSubmitted] = useState(false);
 
+  // Fallback image
+  const fallbackImage = "https://via.placeholder.com/600x400?text=No+Image";
+
   useEffect(() => {
     const loadProduct = async () => {
       try {
@@ -52,6 +55,12 @@ export default function ProductDetail() {
       setSubmitted(false);
       setForm({ name: "", email: "", phone: "", qty: "1", message: "" });
     }, 5000);
+  };
+
+  // Handle image error
+  const handleImageError = (e) => {
+    console.warn(`⚠️ Product image failed to load: ${product?.img}`);
+    e.target.src = fallbackImage;
   };
 
   if (loading) {
@@ -125,9 +134,10 @@ export default function ProductDetail() {
                 style={{ border: "1px solid rgba(26,61,110,0.1)" }}
               >
                 <img
-                  src={product.img || "https://via.placeholder.com/600x400"}
+                  src={product.img || fallbackImage}
                   alt={product.name}
                   className="w-full h-full object-cover"
+                  onError={handleImageError}
                 />
               </div>
               {product.badge && (
@@ -173,7 +183,7 @@ export default function ProductDetail() {
                 <span className="text-sm font-normal font-barlow ml-2" style={{ color: "#6B7794" }}>/ unit (VAT excl.)</span>
               </div>
 
-              {/* Product Description - FIXED: Now renders HTML properly */}
+              {/* Product Description - Renders HTML properly */}
               <div 
                 className="text-sm leading-relaxed font-barlow text-slate-gray mb-8"
                 dangerouslySetInnerHTML={{ __html: product.description }}
@@ -308,9 +318,12 @@ export default function ProductDetail() {
                   >
                     <div className="h-36 bg-[#EDF0F6] overflow-hidden">
                       <img
-                        src={p.img}
+                        src={p.img || fallbackImage}
                         alt={p.name}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        onError={(e) => {
+                          e.target.src = fallbackImage;
+                        }}
                       />
                     </div>
                     <div className="p-4">

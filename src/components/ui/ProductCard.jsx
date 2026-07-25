@@ -20,6 +20,15 @@ const ProductCard = ({ product }) => {
     }
   };
 
+  // Fallback image if the main one fails
+  const fallbackImage = "https://via.placeholder.com/600x400?text=No+Image";
+
+  // Handle image error
+  const handleImageError = (e) => {
+    console.warn(`⚠️ Image failed to load for ${product.name}:`, product.img);
+    e.target.src = fallbackImage;
+  };
+
   return (
     <Link 
       to={`/products/${product.id}`}
@@ -27,9 +36,11 @@ const ProductCard = ({ product }) => {
     >
       <div className="relative h-48 bg-[#EDF0F6] overflow-hidden flex-shrink-0">
         <img 
-          src={product.img} 
+          src={product.img || fallbackImage} 
           alt={product.name} 
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+          loading="lazy"
+          onError={handleImageError}
         />
         {/* Badge - Product Badge (Best Seller, New Arrival, etc.) */}
         {product.badge && product.badge.trim() !== '' && (
