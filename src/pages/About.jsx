@@ -20,7 +20,7 @@ export default function About() {
     <>
       <PageHero
         title="About RKC Industrial Supply"
-        subtitle="A decade of excellence in industrial automation and renewable energy — built on integrity, expertise, and genuine partnership."
+        subtitle="Years of excellence in industrial automation and renewable energy — built on integrity, expertise, and genuine partnership."
       />
 
       {/* ── Mission & Vision ── */}
