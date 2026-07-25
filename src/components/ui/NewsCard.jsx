@@ -1,15 +1,24 @@
 // src/components/ui/NewsCard.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Calendar, User } from 'lucide-react';
 
-const NewsCard = ({ article, featured = false }) => {
-  // Fallback image
-  const fallbackImage = "https://via.placeholder.com/800x400?text=No+Image";
+// Inline SVG placeholder
+const PLACEHOLDER_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Crect width='800' height='400' fill='%23EDF0F6'/%3E%3Ctext x='400' y='200' font-family='Arial' font-size='20' fill='%236B7794' text-anchor='middle'%3ENo Image%3C/text%3E%3C/svg%3E";
 
-  // Handle image error
-  const handleImageError = (e) => {
-    e.target.src = fallbackImage;
+const NewsCard = ({ article, featured = false }) => {
+  const [imageError, setImageError] = useState(false);
+
+  const handleImageError = () => {
+    if (!imageError) {
+      setImageError(true);
+    }
+  };
+
+  const getImageSrc = () => {
+    if (imageError) return PLACEHOLDER_IMAGE;
+    if (article.img && article.img.startsWith('http')) return article.img;
+    return PLACEHOLDER_IMAGE;
   };
 
   if (featured) {
@@ -23,7 +32,7 @@ const NewsCard = ({ article, featured = false }) => {
           {/* Image - Fixed aspect ratio */}
           <div className="h-64 lg:h-[300px] bg-[#EDF0F6] overflow-hidden flex-shrink-0">
             <img
-              src={article.img || fallbackImage}
+              src={getImageSrc()}
               alt={article.title}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               onError={handleImageError}
@@ -73,7 +82,7 @@ const NewsCard = ({ article, featured = false }) => {
       {/* Image - Fixed height */}
       <div className="h-48 bg-[#EDF0F6] overflow-hidden flex-shrink-0">
         <img
-          src={article.img || fallbackImage}
+          src={getImageSrc()}
           alt={article.title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           onError={handleImageError}

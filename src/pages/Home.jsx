@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 import { PRODUCTS, NEWS, HOMEPAGE } from "../data";
 import { fetchProducts, fetchNews } from "../services/api";
-import Button from "../components/ui/Button";
 import ProductCard from "../components/ui/ProductCard";
 
 // ─── Map icon strings to components ─────────────────────────────
@@ -111,7 +110,6 @@ export default function Home() {
       if (response.ok) {
         setQuickInquirySubmitted(true);
         setQuickInquiry({ name: "", email: "", phone: "", productService: "" });
-        // Reset after 5 seconds
         setTimeout(() => {
           setQuickInquirySubmitted(false);
         }, 5000);
@@ -133,9 +131,6 @@ export default function Home() {
 
   const featured = products.slice(0, 3);
   const latestNews = news.slice(0, 3);
-
-  // Fallback image
-  const fallbackImage = "https://via.placeholder.com/600x400?text=No+Image";
 
   if (loading) {
     return (

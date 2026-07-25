@@ -6,6 +6,9 @@ import { fetchNews, fetchNewsById, fetchNewsCategories } from "../services/api";
 import { PageHero } from "../components/Layout";
 import NewsCard from "../components/ui/NewsCard";
 
+// Placeholder for News Detail
+const PLACEHOLDER_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Crect width='800' height='400' fill='%23EDF0F6'/%3E%3Ctext x='400' y='200' font-family='Arial' font-size='20' fill='%236B7794' text-anchor='middle'%3ENo Image%3C/text%3E%3C/svg%3E";
+
 // ─── News Listing Component ──────────────────────────────────────
 
 function NewsList() {
@@ -80,7 +83,6 @@ function NewsList() {
     const remainingArticles = filteredNews.slice(1);
     const remainingCount = remainingArticles.length;
 
-    // If no remaining articles, only page 1
     if (remainingCount === 0) {
       return {
         featured: featured,
@@ -89,16 +91,12 @@ function NewsList() {
       };
     }
 
-    // Calculate total pages
-    // Page 1: featured + first 6 regular
-    // If more than 6 regular, additional pages with 6 each
     let totalPages = 1;
     if (remainingCount > regularPostsPerPage) {
       const extraCount = remainingCount - regularPostsPerPage;
       totalPages += Math.ceil(extraCount / regularPostsPerPage);
     }
 
-    // Get regular articles for current page
     const startIndex = (currentPage - 1) * regularPostsPerPage;
     const endIndex = Math.min(startIndex + regularPostsPerPage, remainingCount);
     const regularArticles = remainingArticles.slice(startIndex, endIndex);
@@ -111,8 +109,6 @@ function NewsList() {
   };
 
   const { featured: featuredArticle, regular: regularArticles, totalPages } = getPaginatedArticles();
-
-  // ─── Display Range ─────────────────────────────────────────────
 
   const getDisplayRange = () => {
     if (filteredNews.length === 0) return { start: 0, end: 0, total: 0 };
@@ -130,8 +126,6 @@ function NewsList() {
   };
 
   const range = getDisplayRange();
-
-  // ─── Loading & Error States ────────────────────────────────────
 
   if (loading) {
     return (
@@ -168,8 +162,6 @@ function NewsList() {
       </>
     );
   }
-
-  // ─── Render ─────────────────────────────────────────────────────
 
   return (
     <>
@@ -212,8 +204,6 @@ function NewsList() {
               ))}
             </div>
           ) : (
-            // If no regular articles but there IS a featured article, show empty state
-            // This happens when there's only 1 article total
             !featuredArticle && (
               <div className="text-center py-16">
                 <p className="text-lg font-barlow-condensed text-deep-navy">
@@ -297,6 +287,7 @@ export function NewsDetail() {
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     const loadArticle = async () => {
@@ -308,8 +299,8 @@ export function NewsDetail() {
           return;
         }
         setArticle(data);
+        setImageError(false);
 
-        // ─── Fetch more articles (any category) ──────────────────
         try {
           const allNews = await fetchNews();
           const otherArticles = allNews.filter((item) => item.id !== data.id);
@@ -328,6 +319,18 @@ export function NewsDetail() {
     };
     loadArticle();
   }, [id]);
+
+  const handleImageError = () => {
+    if (!imageError) {
+      setImageError(true);
+    }
+  };
+
+  const getImageSrc = () => {
+    if (imageError) return PLACEHOLDER_IMAGE;
+    if (article?.img && article.img.startsWith('http')) return article.img;
+    return PLACEHOLDER_IMAGE;
+  };
 
   if (loading) {
     return (
@@ -386,9 +389,10 @@ export function NewsDetail() {
 
           <div className="rounded-2xl overflow-hidden bg-[#EDF0F6] aspect-video mb-8 border border-steel-blue/10">
             <img
-              src={article.img}
+              src={getImageSrc()}
               alt={article.title}
               className="w-full h-full object-cover"
+              onError={handleImageError}
             />
           </div>
 
@@ -450,9 +454,12 @@ export function NewsDetail() {
                 >
                   <div className="w-20 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-[#EDF0F6]">
                     <img
-                      src={n.img}
+                      src={n.img && n.img.startsWith('http') ? n.img : PLACEHOLDER_IMAGE}
                       alt={n.title}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = PLACEHOLDER_IMAGE;
+                      }}
                     />
                   </div>
                   <div>
