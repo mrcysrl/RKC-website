@@ -5,9 +5,6 @@ import { ArrowLeft, ChevronRight, Phone, Package, CheckCircle } from "lucide-rea
 import { fetchProducts } from "../services/api";
 import { PageHero } from "../components/Layout";
 
-// Inline SVG placeholder
-const PLACEHOLDER_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400'%3E%3Crect width='600' height='400' fill='%23EDF0F6'/%3E%3Ctext x='300' y='200' font-family='Arial' font-size='20' fill='%236B7794' text-anchor='middle'%3ENo Image%3C/text%3E%3C/svg%3E";
-
 export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -15,7 +12,6 @@ export default function ProductDetail() {
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [imageError, setImageError] = useState(false);
 
   const [form, setForm] = useState({ name: "", email: "", phone: "", qty: "1", message: "" });
   const [submitted, setSubmitted] = useState(false);
@@ -33,7 +29,6 @@ export default function ProductDetail() {
         }
 
         setProduct(found);
-        setImageError(false);
 
         // Get related products (same category, different product)
         const relatedProducts = allProducts
@@ -57,20 +52,6 @@ export default function ProductDetail() {
       setSubmitted(false);
       setForm({ name: "", email: "", phone: "", qty: "1", message: "" });
     }, 5000);
-  };
-
-  // Handle image error - only set once
-  const handleImageError = () => {
-    if (!imageError) {
-      setImageError(true);
-    }
-  };
-
-  // Get image source
-  const getImageSrc = (imgUrl) => {
-    if (imageError) return PLACEHOLDER_IMAGE;
-    if (imgUrl && imgUrl.startsWith('http')) return imgUrl;
-    return PLACEHOLDER_IMAGE;
   };
 
   if (loading) {
@@ -144,10 +125,9 @@ export default function ProductDetail() {
                 style={{ border: "1px solid rgba(26,61,110,0.1)" }}
               >
                 <img
-                  src={getImageSrc(product.img)}
+                  src={product.img}
                   alt={product.name}
                   className="w-full h-full object-cover"
-                  onError={handleImageError}
                 />
               </div>
               {product.badge && (
@@ -328,12 +308,9 @@ export default function ProductDetail() {
                   >
                     <div className="h-36 bg-[#EDF0F6] overflow-hidden">
                       <img
-                        src={p.img && p.img.startsWith('http') ? p.img : PLACEHOLDER_IMAGE}
+                        src={p.img}
                         alt={p.name}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        onError={(e) => {
-                          e.target.src = PLACEHOLDER_IMAGE;
-                        }}
                       />
                     </div>
                     <div className="p-4">

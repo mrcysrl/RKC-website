@@ -1,15 +1,9 @@
 // src/components/ui/ProductCard.jsx
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 
-// Inline SVG placeholder (no external dependencies)
-const PLACEHOLDER_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400'%3E%3Crect width='600' height='400' fill='%23EDF0F6'/%3E%3Ctext x='300' y='200' font-family='Arial' font-size='20' fill='%236B7794' text-anchor='middle'%3ENo Image%3C/text%3E%3C/svg%3E";
-
 const ProductCard = ({ product }) => {
-  // Track image error state per product
-  const [imageError, setImageError] = useState(false);
-
   // Determine stock status color
   const getStockColor = (status) => {
     switch (status) {
@@ -26,20 +20,6 @@ const ProductCard = ({ product }) => {
     }
   };
 
-  // Handle image error - only set once
-  const handleImageError = () => {
-    if (!imageError) {
-      setImageError(true);
-    }
-  };
-
-  // Get the image source
-  const getImageSrc = () => {
-    if (imageError) return PLACEHOLDER_IMAGE;
-    if (product.img && product.img.startsWith('http')) return product.img;
-    return PLACEHOLDER_IMAGE;
-  };
-
   return (
     <Link 
       to={`/products/${product.id}`}
@@ -47,11 +27,10 @@ const ProductCard = ({ product }) => {
     >
       <div className="relative h-48 bg-[#EDF0F6] overflow-hidden flex-shrink-0">
         <img 
-          src={getImageSrc()} 
+          src={product.img} 
           alt={product.name} 
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
           loading="lazy"
-          onError={handleImageError}
         />
         {/* Badge - Product Badge (Best Seller, New Arrival, etc.) */}
         {product.badge && product.badge.trim() !== '' && (

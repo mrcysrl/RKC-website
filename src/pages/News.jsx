@@ -1,13 +1,21 @@
 // src/pages/News.jsx
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Calendar, User, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  ArrowLeft,
+  Calendar,
+  User,
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { fetchNews, fetchNewsById, fetchNewsCategories } from "../services/api";
 import { PageHero } from "../components/Layout";
 import NewsCard from "../components/ui/NewsCard";
 
 // Placeholder for News Detail
-const PLACEHOLDER_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Crect width='800' height='400' fill='%23EDF0F6'/%3E%3Ctext x='400' y='200' font-family='Arial' font-size='20' fill='%236B7794' text-anchor='middle'%3ENo Image%3C/text%3E%3C/svg%3E";
+const PLACEHOLDER_IMAGE =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Crect width='800' height='400' fill='%23EDF0F6'/%3E%3Ctext x='400' y='200' font-family='Arial' font-size='20' fill='%236B7794' text-anchor='middle'%3ENo Image%3C/text%3E%3C/svg%3E";
 
 // ─── News Listing Component ──────────────────────────────────────
 
@@ -108,11 +116,15 @@ function NewsList() {
     };
   };
 
-  const { featured: featuredArticle, regular: regularArticles, totalPages } = getPaginatedArticles();
+  const {
+    featured: featuredArticle,
+    regular: regularArticles,
+    totalPages,
+  } = getPaginatedArticles();
 
   const getDisplayRange = () => {
     if (filteredNews.length === 0) return { start: 0, end: 0, total: 0 };
-    
+
     let start, end;
     if (currentPage === 1) {
       start = 1;
@@ -121,7 +133,7 @@ function NewsList() {
       start = (currentPage - 1) * regularPostsPerPage + 1;
       end = Math.min(start + regularArticles.length - 1, filteredNews.length);
     }
-    
+
     return { start, end, total: filteredNews.length };
   };
 
@@ -232,22 +244,24 @@ function NewsList() {
               </button>
 
               <div className="flex items-center gap-1.5">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => {
-                      setCurrentPage(page);
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }}
-                    className={`w-10 h-10 rounded-lg text-sm font-semibold font-barlow transition-all ${
-                      currentPage === page
-                        ? "bg-steel-blue text-white border border-steel-blue"
-                        : "bg-white text-slate-gray border border-steel-blue/15 hover:border-steel-blue/40 hover:text-steel-blue"
-                    }`}
-                  >
-                    {page}
-                  </button>
-                ))}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => {
+                        setCurrentPage(page);
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
+                      className={`w-10 h-10 rounded-lg text-sm font-semibold font-barlow transition-all ${
+                        currentPage === page
+                          ? "bg-steel-blue text-white border border-steel-blue"
+                          : "bg-white text-slate-gray border border-steel-blue/15 hover:border-steel-blue/40 hover:text-steel-blue"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ),
+                )}
               </div>
 
               <button
@@ -287,7 +301,6 @@ export function NewsDetail() {
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     const loadArticle = async () => {
@@ -299,7 +312,6 @@ export function NewsDetail() {
           return;
         }
         setArticle(data);
-        setImageError(false);
 
         try {
           const allNews = await fetchNews();
@@ -319,18 +331,6 @@ export function NewsDetail() {
     };
     loadArticle();
   }, [id]);
-
-  const handleImageError = () => {
-    if (!imageError) {
-      setImageError(true);
-    }
-  };
-
-  const getImageSrc = () => {
-    if (imageError) return PLACEHOLDER_IMAGE;
-    if (article?.img && article.img.startsWith('http')) return article.img;
-    return PLACEHOLDER_IMAGE;
-  };
 
   if (loading) {
     return (
@@ -389,10 +389,9 @@ export function NewsDetail() {
 
           <div className="rounded-2xl overflow-hidden bg-[#EDF0F6] aspect-video mb-8 border border-steel-blue/10">
             <img
-              src={getImageSrc()}
+              src={article.img}
               alt={article.title}
               className="w-full h-full object-cover"
-              onError={handleImageError}
             />
           </div>
 
@@ -424,7 +423,8 @@ export function NewsDetail() {
                   Interested in this product or service?
                 </p>
                 <p className="text-sm font-barlow text-white/60">
-                  Contact our team for availability, pricing, and technical consultation.
+                  Contact our team for availability, pricing, and technical
+                  consultation.
                 </p>
               </div>
               <Link
@@ -454,12 +454,9 @@ export function NewsDetail() {
                 >
                   <div className="w-20 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-[#EDF0F6]">
                     <img
-                      src={n.img && n.img.startsWith('http') ? n.img : PLACEHOLDER_IMAGE}
+                      src={n.img}
                       alt={n.title}
                       className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.src = PLACEHOLDER_IMAGE;
-                      }}
                     />
                   </div>
                   <div>
