@@ -173,9 +173,11 @@ export default function ProductDetail() {
                 <span className="text-sm font-normal font-barlow ml-2" style={{ color: "#6B7794" }}>/ unit (VAT excl.)</span>
               </div>
 
-              <p className="text-sm leading-relaxed font-barlow text-slate-gray mb-8">
-                {product.description}
-              </p>
+              {/* Product Description - FIXED: Now renders HTML properly */}
+              <div 
+                className="text-sm leading-relaxed font-barlow text-slate-gray mb-8"
+                dangerouslySetInnerHTML={{ __html: product.description }}
+              />
 
               {/* Specs */}
               {product.specs && product.specs.length > 0 && (
