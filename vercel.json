@@ -1,8 +1,8 @@
-{
+
   "rewrites": [
     {
       "source": "/wp-json/(.*)",
-      "destination": "https://rkcindustrialph.com/wp-json/$1"
+      "destination": "https://cms.rkcindustrialph.com/wp-json/$1"
     },
     {
       "source": "/(.*)",
