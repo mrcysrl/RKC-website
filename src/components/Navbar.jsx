@@ -2,6 +2,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+// Import your logo
+import logo from "../assets/images/RKC logo.jpg";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -83,10 +85,17 @@ const Navbar = () => {
           
           {/* Left: Logo / Company Name */}
           <div className="flex-shrink-0">
-            <Link to="/" className="flex items-center" onClick={closeMenu}>
-              <span className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight font-barlow-condensed">
-                RKC<span className="text-amber"> Industrial</span>
-              </span>
+            <Link to="/" className="flex items-center gap-3" onClick={closeMenu}>
+              <img
+                src={logo}
+                alt="RKC Industrial Supply"
+                className="h-10 w-auto object-contain"
+              />
+              <div className="hidden sm:block">
+                <span className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight font-barlow-condensed">
+                  RKC<span className="text-amber"> Industrial</span>
+                </span>
+              </div>
             </Link>
           </div>
 
@@ -158,6 +167,19 @@ const Navbar = () => {
           }`}
         >
           <div className="pb-4 pt-2 border-t border-white/10 flex flex-col gap-1">
+            {/* Mobile Logo */}
+            <div className="px-3 py-2 flex items-center gap-3">
+              <img
+                src={logo}
+                alt="RKC Industrial Supply"
+                className="h-8 w-auto object-contain"
+              />
+              <span className="font-barlow-condensed text-lg font-bold text-white">
+                RKC<span className="text-amber"> Industrial</span>
+              </span>
+            </div>
+            <div className="h-px bg-white/10 my-1" />
+
             {navLinks.map((link) => (
               <Link
                 key={link.to}

@@ -1,6 +1,7 @@
 // src/components/Footer.jsx
 import { Link } from "react-router-dom";
 import { Phone, Mail, Facebook } from "lucide-react";
+import logo from "../assets/images/RKC logo.jpg";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -34,7 +35,12 @@ const Footer = () => {
           
           {/* Column 1: Brand + Contact */}
           <div className="space-y-4">
-            <Link to="/" className="inline-block">
+            <Link to="/" className="inline-flex items-center gap-3">
+              <img
+                src={logo}
+                alt="RKC Industrial Supply"
+                className="h-12 w-auto object-contain"
+              />
               <span className="text-2xl font-bold tracking-tight font-barlow-condensed text-white">
                 RKC<span className="text-amber"> Industrial</span>
               </span>
