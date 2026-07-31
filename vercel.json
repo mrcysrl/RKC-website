@@ -2,11 +2,19 @@
   "rewrites": [
     {
       "source": "/wp-json/(.*)",
-      "destination": "https://cms.rkcindustrialph.com/wp-json/$1"
+      "destination": "https://www.rkcindustrialph.com/wp-json/$1"
     },
     {
       "source": "/wp-content/uploads/(.*)",
-      "destination": "https://cms.rkcindustrialph.com/wp-content/uploads/$1"
+      "destination": "https://www.rkcindustrialph.com/wp-content/uploads/$1"
+    },
+    {
+      "source": "/wp-admin/(.*)",
+      "destination": "https://www.rkcindustrialph.com/wp-admin/$1"
+    },
+    {
+      "source": "/wp-login.php",
+      "destination": "https://www.rkcindustrialph.com/wp-login.php"
     },
     {
       "source": "/(.*)",
