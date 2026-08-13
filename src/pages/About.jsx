@@ -163,7 +163,8 @@ export default function About() {
               Our Leadership Team
             </h2>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+          <div className="grid gap-6"> 
+            {/* grid-cols-2 sm:grid-cols-4 */}
             {team.map((m) => (
               <div key={m.name} className="text-center group">
                 <div className="w-24 h-24 rounded-full mx-auto mb-4 bg-gradient-to-br from-steel-blue to-primary-blue flex items-center justify-center text-amber text-2xl font-barlow-condensed font-bold border-3 border-steel-blue/15 group-hover:scale-105 transition-transform">

@@ -252,7 +252,6 @@ export const SERVICES = [
       "Net metering assistance (MERALCO, distribution utilities)",
       "Complete installation by certified solar installers",
       "System monitoring and performance tracking",
-      "25-year panel warranty, 10-year workmanship warranty",
     ],
     industries: [
       "Homeowners",
@@ -278,7 +277,6 @@ export const SERVICES = [
       "Whole-home backup solutions",
       "Off-grid and hybrid solar systems",
       "Smart energy management and monitoring",
-      "10-year battery warranty",
     ],
     industries: ["Homeowners", "Condominiums", "Estates", "Small Businesses"],
     cta: "Explore Battery Options",
@@ -425,7 +423,7 @@ export const NEWS = [
     title: "RKC Hosts Free Industrial Automation Seminar for Engineers",
     excerpt:
       "Over 80 engineers and plant managers attended RKC's full-day automation seminar featuring Siemens and Mitsubishi technical experts.",
-    body: "RKC Industrial Supply recently hosted a free industrial automation seminar at its Quezon City headquarters...",
+    body: "RKC Industrial Supply recently hosted a free industrial automation seminar at its Binan Laguna headquarters...",
     category: "Events",
     date: "March 15, 2026",
     author: "RKC Training Team",
@@ -449,7 +447,7 @@ export const ABOUT_DATA = {
     {
       year: "2024",
       title: "Company Founded",
-      desc: "RKC Industrial Supply established in Quezon City as a specialist distributor of industrial electrical components.",
+      desc: "RKC Industrial Supply established in Binan Laguna as a specialist distributor of industrial electrical components.",
     },
     {
       year: "2025",
@@ -486,9 +484,6 @@ export const ABOUT_DATA = {
   ],
   team: [
     { name: "Chito Nera", role: "Founder & CEO" },
-    { name: "Chito Nera", role: "Head of Sales" },
-    { name: "Chito Nera", role: "Chief Engineer" },
-    { name: "Chito Nera", role: "Solar Energy Lead" },
   ],
   mission:
     "To empower Philippine industry with reliable automation and renewable energy solutions — delivered with speed, expertise, and integrity.",
@@ -571,10 +566,10 @@ export const BRANDS = [
 // ─── CONTACT DATA ──────────────────────────────────────────────
 export const CONTACT = {
   formEndpoint: "https://formspree.io/f/mrenyorg",
-  phone: "+63 2 8888-1234",
-  phoneAlt: "+63 917 888 5678",
-  email: "sales@rkcindustrial.ph",
-  emailSupport: "support@rkcindustrial.ph",
+  phone: "+63 919 098 4958 ",
+  phoneAlt: "support@rkcindustrialph.com",
+  email: "rkcindustrial@gmail.com",
+  emailSupport: "support@rkcindustrialph.com",
   address: "B42 L34 Evergreen Country, Brgy. Zapote, 4024 Biñan City, Laguna",
   mapImage: contactMap,
   mapUrl:
@@ -692,8 +687,8 @@ export const RFQ_DATA = {
   },
 
   contactInfo: {
-    phone: "+63 2 8888-1234",
-    email: "solar@rkcindustrial.ph",
+    phone: "+63 919 098 4958",
+    email: "rkcindustrial@gmail.com",
     address: "B42 L34 Evergreen Country, Brgy. Zapote, 4024 Biñan City, Laguna",
     hours: {
       weekdays: "8:00 AM – 6:00 PM",

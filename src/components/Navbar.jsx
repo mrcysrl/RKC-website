@@ -119,7 +119,7 @@ const Navbar = () => {
           {/* Right: Phone Number + RFQ Button (Desktop) */}
           <div className="hidden md:flex items-center gap-2 lg:gap-3 ml-auto flex-shrink-0">
             <span className="hidden xl:inline text-sm xl:text-base text-off-white font-barlow whitespace-nowrap">
-              📞 +63 2 8888-1234
+              📞 +63 919 098 4958
             </span>
             <Link
               to="/rfq"

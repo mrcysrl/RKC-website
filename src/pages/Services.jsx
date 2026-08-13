@@ -70,7 +70,7 @@ export default function Services() {
 
       <section className="py-0 bg-off-white">
         {/* ── Sticky Tab Navigation ── */}
-        <div className="sticky top-16 z-40 bg-steel-blue shadow-lg">
+        <div className="sticky top-20 z-40 bg-steel-blue shadow-lg">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="relative flex overflow-x-auto scrollbar-hide gap-0">
               {/* Sliding Indicator */}

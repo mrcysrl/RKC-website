@@ -591,10 +591,10 @@ export default function Home() {
                 </p>
                 {[
                   { icon: <Phone size={14} />, text: "+63 2 8888-1234" },
-                  { icon: <Mail size={14} />, text: "sales@rkcindustrial.ph" },
+                  { icon: <Mail size={14} />, text: "rkcindustrial@gmail.com" },
                   {
                     icon: <MapPin size={14} />,
-                    text: "Quezon City, Metro Manila",
+                    text: "Binan Laguna, Biñan, Philippines, 4024",
                   },
                 ].map((c) => (
                   <div

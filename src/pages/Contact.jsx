@@ -117,7 +117,7 @@ export default function Contact() {
           {/* ── Contact Cards ── */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-14">
             {[
-              { icon: <Phone size={22} />, title: "Call Us", lines: [phone, phoneAlt], color: "#1A3D6E" },
+              { icon: <Phone size={22} />, title: "Call Us", lines: [phone], color: "#1A3D6E" },
               { icon: <Mail size={22} />, title: "Email Us", lines: [email, emailSupport], color: "#2E6BB0" },
               { icon: <MapPin size={22} />, title: "Visit Us", lines: [address], color: "#1A3D6E" },
               { icon: <Clock size={22} />, title: "Business Hours", lines: [hours.weekdays, hours.saturday, hours.sunday], color: "#2E6BB0" },
@@ -229,7 +229,7 @@ export default function Contact() {
                 <div className="flex flex-col gap-3">
                   {[
                     { label: "Sales & Quotation", value: phone },
-                    { label: "Technical Support", value: phoneAlt },
+                    { label: "Technical Support", value: emailSupport },
                     { label: "Email (General)", value: email },
                   ].map((d) => (
                     <div key={d.label}>

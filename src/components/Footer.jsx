@@ -32,7 +32,6 @@ const Footer = () => {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-4">
         {/* Main Footer Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 pb-8 border-b border-white/10">
-          
           {/* Column 1: Brand + Contact */}
           <div className="space-y-4">
             <Link to="/" className="inline-flex items-center gap-3">
@@ -46,16 +45,17 @@ const Footer = () => {
               </span>
             </Link>
             <p className="text-sm font-barlow text-white/60 leading-relaxed max-w-xs">
-              Your trusted partner for industrial automation and renewable energy solutions across the Philippines.
+              Your trusted partner for industrial automation and renewable
+              energy solutions across the Philippines.
             </p>
             <div className="space-y-2 pt-2">
               <div className="flex items-center gap-3 text-sm font-barlow text-white/60 hover:text-white/90 transition-colors">
                 <Phone size={16} className="text-amber flex-shrink-0" />
-                <span>+63 2 8888-1234</span>
+                <span>+63 919 098 4958</span>
               </div>
               <div className="flex items-center gap-3 text-sm font-barlow text-white/60 hover:text-white/90 transition-colors">
                 <Mail size={16} className="text-amber flex-shrink-0" />
-                <span>sales@rkcindustrial.ph</span>
+                <span>rkcindustrial@gmail.com</span>
               </div>
             </div>
           </div>
@@ -141,7 +141,7 @@ const Footer = () => {
               </h4>
               <div className="flex gap-3">
                 <a
-                  href="#"
+                  href="https://www.facebook.com/rkcindustrial"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Facebook"
