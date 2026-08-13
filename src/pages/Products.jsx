@@ -2,14 +2,15 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Search, ChevronRight, SlidersHorizontal, X } from "lucide-react";
-import { fetchProducts } from "../services/api";
-import { CATEGORIES, BRAND_NAMES } from "../data";
+import { fetchProducts, fetchBrands } from "../services/api";
+import { CATEGORIES } from "../data";
 import { PageHero } from "../components/Layout";
 import ProductCard from "../components/ui/ProductCard";
 
 export default function Products() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [brandOptions, setBrandOptions] = useState(["All Brands"]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -26,29 +27,45 @@ export default function Products() {
       try {
         setLoading(true);
         const data = await fetchProducts();
-        console.log('📦 Products data received:', data);
-        
+        console.log("📦 Products data received:", data);
+
         // Debug: Log all unique categories
-        const uniqueCategories = [...new Set(data.map(p => p.category))];
-        console.log('🏷️ Unique categories in products:', uniqueCategories);
-        
+        const uniqueCategories = [...new Set(data.map((p) => p.category))];
+        console.log("🏷️ Unique categories in products:", uniqueCategories);
+
         if (data && data.length > 0) {
           setProducts(data);
           setFilteredProducts(data);
         } else {
-          console.warn('⚠️ No products data received');
+          console.warn("⚠️ No products data received");
           setProducts([]);
           setFilteredProducts([]);
-          setError('No products found. Please add products in WordPress.');
+          setError("No products found. Please add products in WordPress.");
         }
       } catch (err) {
-        console.error('❌ Error loading products:', err);
-        setError('Failed to load products. Please try again.');
+        console.error("❌ Error loading products:", err);
+        setError("Failed to load products. Please try again.");
       } finally {
         setLoading(false);
       }
     };
     loadProducts();
+  }, []);
+
+  // Fetch brands from WordPress (for filter buttons)
+  useEffect(() => {
+    const loadBrands = async () => {
+      try {
+        const data = await fetchBrands();
+        if (data && data.length > 0) {
+          setBrandOptions(["All Brands", ...data.map((b) => b.name)]);
+        }
+      } catch (err) {
+        console.error("❌ Error loading brands:", err);
+        // brandOptions stays at its ["All Brands"] default on failure
+      }
+    };
+    loadBrands();
   }, []);
 
   // Apply filters and sorting
@@ -58,21 +75,23 @@ export default function Products() {
     // Search
     if (search.trim()) {
       const term = search.toLowerCase();
-      result = result.filter(p =>
-        p.name.toLowerCase().includes(term) ||
-        p.brand.toLowerCase().includes(term) ||
-        p.category.toLowerCase().includes(term)
+      result = result.filter(
+        (p) =>
+          p.name.toLowerCase().includes(term) ||
+          p.brand.toLowerCase().includes(term) ||
+          p.category.toLowerCase().includes(term),
       );
     }
 
     // Category filter - improved matching
     if (category !== "All") {
       console.log(`🔍 Filtering by category: "${category}"`);
-      result = result.filter(p => {
+      result = result.filter((p) => {
         // Match exactly OR case-insensitive OR partial match
-        const match = p.category === category || 
-                      p.category?.toLowerCase() === category.toLowerCase() ||
-                      p.category?.includes(category);
+        const match =
+          p.category === category ||
+          p.category?.toLowerCase() === category.toLowerCase() ||
+          p.category?.includes(category);
         if (match) {
           console.log(`  ✅ Matched: "${p.category}"`);
         } else {
@@ -85,9 +104,9 @@ export default function Products() {
     // Brand filter
     if (brand !== "All Brands") {
       console.log(`🔍 Filtering by brand: "${brand}"`);
-      result = result.filter(p => {
-        const match = p.brand === brand || 
-                      p.brand?.toLowerCase() === brand.toLowerCase();
+      result = result.filter((p) => {
+        const match =
+          p.brand === brand || p.brand?.toLowerCase() === brand.toLowerCase();
         return match;
       });
     }
@@ -107,7 +126,10 @@ export default function Products() {
   }, [products, search, category, brand, sort]);
 
   const totalPages = Math.ceil(filteredProducts.length / perPage);
-  const paginated = filteredProducts.slice((page - 1) * perPage, page * perPage);
+  const paginated = filteredProducts.slice(
+    (page - 1) * perPage,
+    page * perPage,
+  );
 
   const clearFilters = () => {
     setSearch("");
@@ -117,13 +139,23 @@ export default function Products() {
     setPage(1);
   };
 
-  const hasFilters = search || category !== "All" || brand !== "All Brands" || sort !== "default";
+  const hasFilters =
+    search ||
+    category !== "All" ||
+    brand !== "All Brands" ||
+    sort !== "default";
 
   if (loading) {
     return (
       <>
-        <PageHero title="Product Catalog" subtitle="Browse our complete range of industrial automation components and renewable energy equipment." />
-        <div className="min-h-[60vh] flex items-center justify-center" style={{ background: "#F8F9FC" }}>
+        <PageHero
+          title="Product Catalog"
+          subtitle="Browse our complete range of industrial automation components and renewable energy equipment."
+        />
+        <div
+          className="min-h-[60vh] flex items-center justify-center"
+          style={{ background: "#F8F9FC" }}
+        >
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber"></div>
         </div>
       </>
@@ -133,8 +165,14 @@ export default function Products() {
   if (error) {
     return (
       <>
-        <PageHero title="Product Catalog" subtitle="Browse our complete range of industrial automation components and renewable energy equipment." />
-        <div className="min-h-[60vh] flex items-center justify-center" style={{ background: "#F8F9FC" }}>
+        <PageHero
+          title="Product Catalog"
+          subtitle="Browse our complete range of industrial automation components and renewable energy equipment."
+        />
+        <div
+          className="min-h-[60vh] flex items-center justify-center"
+          style={{ background: "#F8F9FC" }}
+        >
           <div className="text-center">
             <p className="text-red-500 font-barlow">{error}</p>
             <button
@@ -161,7 +199,11 @@ export default function Products() {
           {/* Search + Sort bar */}
           <div className="flex flex-col sm:flex-row gap-3 mb-6">
             <div className="relative flex-1">
-              <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2" style={{ color: "#6B7794" }} />
+              <Search
+                size={15}
+                className="absolute left-3.5 top-1/2 -translate-y-1/2"
+                style={{ color: "#6B7794" }}
+              />
               <input
                 type="text"
                 placeholder="Search products, brands, categories..."
@@ -200,8 +242,11 @@ export default function Products() {
                 {c}
               </button>
             ))}
-            <div className="w-px mx-1 self-stretch" style={{ background: "rgba(26,61,110,0.15)" }} />
-            {BRAND_NAMES.map((b) => (
+            <div
+              className="w-px mx-1 self-stretch"
+              style={{ background: "rgba(26,61,110,0.15)" }}
+            />
+            {brandOptions.map((b) => (
               <button
                 key={b}
                 onClick={() => setBrand(b)}
@@ -218,7 +263,11 @@ export default function Products() {
               <button
                 onClick={clearFilters}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold font-barlow transition-all"
-                style={{ background: "rgba(212,24,61,0.08)", color: "#d4183d", border: "1.5px solid rgba(212,24,61,0.2)" }}
+                style={{
+                  background: "rgba(212,24,61,0.08)",
+                  color: "#d4183d",
+                  border: "1.5px solid rgba(212,24,61,0.2)",
+                }}
               >
                 <X size={12} /> Clear All
               </button>
@@ -227,7 +276,11 @@ export default function Products() {
 
           {/* Results count */}
           <p className="text-sm mb-8 font-barlow" style={{ color: "#6B7794" }}>
-            Showing <strong style={{ color: "#0F1A2E" }}>{filteredProducts.length}</strong> product{filteredProducts.length !== 1 && "s"}
+            Showing{" "}
+            <strong style={{ color: "#0F1A2E" }}>
+              {filteredProducts.length}
+            </strong>{" "}
+            product{filteredProducts.length !== 1 && "s"}
           </p>
 
           {/* Product grid */}
@@ -239,8 +292,18 @@ export default function Products() {
             </div>
           ) : (
             <div className="text-center py-20">
-              <p className="text-lg font-bold mb-2 font-barlow-condensed" style={{ color: "#0F1A2E" }}>No products found</p>
-              <p className="text-sm mb-6 font-barlow" style={{ color: "#6B7794" }}>Try adjusting your search or filters.</p>
+              <p
+                className="text-lg font-bold mb-2 font-barlow-condensed"
+                style={{ color: "#0F1A2E" }}
+              >
+                No products found
+              </p>
+              <p
+                className="text-sm mb-6 font-barlow"
+                style={{ color: "#6B7794" }}
+              >
+                Try adjusting your search or filters.
+              </p>
               <button
                 onClick={clearFilters}
                 className="px-6 py-2.5 rounded font-bold text-sm font-barlow bg-steel-blue text-white hover:bg-opacity-90 transition"

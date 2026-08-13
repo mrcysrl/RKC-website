@@ -1,5 +1,5 @@
 // ─── IMPORT MOCK DATA FROM INDEX.JS ────────────────────────────
-import { MOCK_PRODUCTS, MOCK_NEWS } from '../data/index.js';
+import { MOCK_PRODUCTS, MOCK_NEWS } from "../data/index.js";
 
 // Use environment variable for API URL
 // In development: uses full URL for local testing
@@ -11,10 +11,10 @@ const WORDPRESS_URL = import.meta.env.DEV ? "https://rkcindustrialph.com" : "";
 const BADGE_MAP = {
   "best-seller": { text: "Best Seller", color: "#F5A800" },
   "new-arrival": { text: "New Arrival", color: "#2E6BB0" },
-  "featured": { text: "Featured", color: "#1A3D6E" },
-  "popular": { text: "Popular", color: "#F5A800" },
+  featured: { text: "Featured", color: "#1A3D6E" },
+  popular: { text: "Popular", color: "#F5A800" },
   "limited-stock": { text: "Limited Stock", color: "#D4183D" },
-  "none": { text: null, color: null },
+  none: { text: null, color: null },
 };
 
 // ─── HELPER FUNCTIONS ──────────────────────────────────────────
@@ -47,45 +47,46 @@ function sanitizeJSON(str) {
 // ─── FETCH WITH CORS-FRIENDLY HEADERS ─────────────────────────
 
 async function fetchFromWP(endpoint, retries = 3) {
-  const separator = endpoint.includes('?') ? '&' : '?';
+  const separator = endpoint.includes("?") ? "&" : "?";
   const cacheBustedEndpoint = `${endpoint}${separator}_=${Date.now()}`;
   // Use relative URL - Vercel proxy will handle the routing
   const url = `${WORDPRESS_URL}/wp-json/wp/v2/${cacheBustedEndpoint}`;
-  
+
   console.log(`🔍 [DEBUG] Attempting to fetch: ${url}`);
-  
+
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       console.log(`🔄 Attempt ${attempt}/${retries}...`);
-      
+
       const response = await fetch(url, {
         headers: {
-          'Accept': 'application/json',
+          Accept: "application/json",
         },
-        signal: AbortSignal.timeout(10000)
+        signal: AbortSignal.timeout(10000),
       });
-      
+
       console.log(`📊 [DEBUG] Response status: ${response.status}`);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      
+
       const data = await response.json();
-      console.log(`✅ [DEBUG] Success! Received ${data.length || 'data'} items`);
+      console.log(
+        `✅ [DEBUG] Success! Received ${data.length || "data"} items`,
+      );
       return data;
-      
     } catch (error) {
       console.warn(`⚠️ Attempt ${attempt}/${retries} failed:`, error.message);
-      
+
       if (attempt === retries) {
         console.error(`❌ All ${retries} attempts failed for ${endpoint}`);
         return null;
       }
-      
+
       const waitTime = 1000 * Math.pow(2, attempt - 1);
       console.log(`⏳ Waiting ${waitTime}ms before retry...`);
-      await new Promise(resolve => setTimeout(resolve, waitTime));
+      await new Promise((resolve) => setTimeout(resolve, waitTime));
     }
   }
 }
@@ -93,8 +94,8 @@ async function fetchFromWP(endpoint, retries = 3) {
 // ─── PRODUCTS ──────────────────────────────────────────────────
 
 export async function fetchProducts() {
-  console.log('🚀 [DEBUG] fetchProducts() called');
-  
+  console.log("🚀 [DEBUG] fetchProducts() called");
+
   try {
     console.log("🔄 Fetching products from WordPress...");
     const products = await fetchFromWP("product?_embed&per_page=100", 3);
@@ -111,7 +112,7 @@ export async function fetchProducts() {
       let category = "";
       if (item._embedded?.["wp:term"] && item._embedded["wp:term"].length > 0) {
         const termArray = item._embedded["wp:term"].find((terms) =>
-          terms.some((term) => term.taxonomy === "product_category")
+          terms.some((term) => term.taxonomy === "product_category"),
         );
         if (termArray && termArray.length > 0) {
           category = termArray.map((term) => term.name).join(", ");
@@ -122,6 +123,17 @@ export async function fetchProducts() {
         category = item.categories.map((cat) => cat.name).join(", ");
       }
 
+      // Extract brand (from the "brand" taxonomy, assigned via checkboxes in wp-admin)
+      let brand = "";
+      if (item._embedded?.["wp:term"] && item._embedded["wp:term"].length > 0) {
+        const termArray = item._embedded["wp:term"].find((terms) =>
+          terms.some((term) => term.taxonomy === "brand"),
+        );
+        if (termArray && termArray.length > 0) {
+          brand = termArray.map((term) => term.name).join(", ");
+        }
+      }
+
       // Handle Badge
       let badgeText = null;
       let badgeColor = null;
@@ -130,12 +142,12 @@ export async function fetchProducts() {
       if (badgeTypeValue && badgeTypeValue !== "") {
         let foundKey = null;
         const foundByText = Object.keys(BADGE_MAP).find(
-          (key) => BADGE_MAP[key].text === badgeTypeValue
+          (key) => BADGE_MAP[key].text === badgeTypeValue,
         );
         if (foundByText) foundKey = foundByText;
         else {
           const foundBySlug = Object.keys(BADGE_MAP).find(
-            (key) => key.toLowerCase() === badgeTypeValue.toLowerCase()
+            (key) => key.toLowerCase() === badgeTypeValue.toLowerCase(),
           );
           if (foundBySlug) foundKey = foundBySlug;
         }
@@ -153,7 +165,8 @@ export async function fetchProducts() {
         const foundKey = Object.keys(BADGE_MAP).find(
           (key) =>
             BADGE_MAP[key].text === item.acf.badge ||
-            BADGE_MAP[key].text?.toLowerCase() === item.acf.badge?.toLowerCase()
+            BADGE_MAP[key].text?.toLowerCase() ===
+              item.acf.badge?.toLowerCase(),
         );
         if (foundKey) {
           const badgeData = BADGE_MAP[foundKey];
@@ -183,14 +196,19 @@ export async function fetchProducts() {
       const imageUrl = item._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
 
       let stockStatus = item.acf?.stock || "In Stock";
-      const validStockValues = ["In Stock", "Out of Stock", "Backorder", "Pre-order"];
+      const validStockValues = [
+        "In Stock",
+        "Out of Stock",
+        "Backorder",
+        "Pre-order",
+      ];
       if (!validStockValues.includes(stockStatus)) stockStatus = "In Stock";
 
       return {
         id: item.slug || item.id.toString(),
         name: item.title?.rendered || "Untitled",
         description: cleanWPContent(item.content?.rendered) || "",
-        brand: item.acf?.brand || "Unknown Brand",
+        brand: brand || "Unknown Brand",
         sku: item.acf?.sku || "",
         category: category || "Uncategorized",
         price: parseInt(item.acf?.price) || 0,
@@ -202,7 +220,9 @@ export async function fetchProducts() {
       };
     });
 
-    console.log(`✅ Successfully mapped ${mappedProducts.length} products from WordPress`);
+    console.log(
+      `✅ Successfully mapped ${mappedProducts.length} products from WordPress`,
+    );
     return mappedProducts;
   } catch (error) {
     console.error("❌ Error in fetchProducts:", error);
@@ -214,29 +234,29 @@ export async function fetchProducts() {
 // ─── NEWS ──────────────────────────────────────────────────────
 
 export async function fetchNews() {
-  console.log('🚀 [DEBUG] fetchNews() called');
-  
+  console.log("🚀 [DEBUG] fetchNews() called");
+
   try {
-    console.log('🔄 Fetching news from WordPress...');
+    console.log("🔄 Fetching news from WordPress...");
     const news = await fetchFromWP("news?_embed&per_page=100", 3);
-    
+
     if (!news || news.length === 0) {
-      console.warn('⚠️ No news from WordPress API, using MOCK_NEWS');
+      console.warn("⚠️ No news from WordPress API, using MOCK_NEWS");
       return MOCK_NEWS;
     }
 
     return news.map((item) => {
       let category = "";
-      if (item._embedded?.['wp:term'] && item._embedded['wp:term'].length > 0) {
-        const termArray = item._embedded['wp:term'].find(terms => 
-          terms.some(term => term.taxonomy === 'news_category')
+      if (item._embedded?.["wp:term"] && item._embedded["wp:term"].length > 0) {
+        const termArray = item._embedded["wp:term"].find((terms) =>
+          terms.some((term) => term.taxonomy === "news_category"),
         );
         if (termArray && termArray.length > 0) {
-          category = termArray.map(term => term.name).join(', ');
+          category = termArray.map((term) => term.name).join(", ");
         }
       }
       if (!category && item.categories && item.categories.length > 0) {
-        category = item.categories.map(cat => cat.name).join(', ');
+        category = item.categories.map((cat) => cat.name).join(", ");
       }
       if (!category && item.acf?.category) category = item.acf.category;
 
@@ -248,11 +268,13 @@ export async function fetchNews() {
         category: category || "Uncategorized",
         date: item.acf?.news_date || item.date || "",
         author: item.acf?.author || "RKC Team",
-        img: item._embedded?.["wp:featuredmedia"]?.[0]?.source_url || "https://via.placeholder.com/800x400",
+        img:
+          item._embedded?.["wp:featuredmedia"]?.[0]?.source_url ||
+          "https://via.placeholder.com/800x400",
       };
     });
   } catch (error) {
-    console.error('❌ Error in fetchNews:', error);
+    console.error("❌ Error in fetchNews:", error);
     return MOCK_NEWS;
   }
 }
@@ -278,16 +300,16 @@ export async function fetchNewsById(id) {
     if (data && data.length > 0) {
       const item = data[0];
       let category = "";
-      if (item._embedded?.['wp:term'] && item._embedded['wp:term'].length > 0) {
-        const termArray = item._embedded['wp:term'].find(terms => 
-          terms.some(term => term.taxonomy === 'news_category')
+      if (item._embedded?.["wp:term"] && item._embedded["wp:term"].length > 0) {
+        const termArray = item._embedded["wp:term"].find((terms) =>
+          terms.some((term) => term.taxonomy === "news_category"),
         );
         if (termArray && termArray.length > 0) {
-          category = termArray.map(term => term.name).join(', ');
+          category = termArray.map((term) => term.name).join(", ");
         }
       }
       if (!category && item.categories && item.categories.length > 0) {
-        category = item.categories.map(cat => cat.name).join(', ');
+        category = item.categories.map((cat) => cat.name).join(", ");
       }
       if (!category && item.acf?.category) category = item.acf.category;
 
@@ -299,7 +321,9 @@ export async function fetchNewsById(id) {
         category: category || "Uncategorized",
         date: item.acf?.news_date || item.date || "",
         author: item.acf?.author || "RKC Team",
-        img: item._embedded?.["wp:featuredmedia"]?.[0]?.source_url || "https://via.placeholder.com/800x400",
+        img:
+          item._embedded?.["wp:featuredmedia"]?.[0]?.source_url ||
+          "https://via.placeholder.com/800x400",
       };
     }
     return null;
@@ -319,8 +343,12 @@ export async function fetchBrands() {
       description: cleanWPContent(item.content?.rendered) || "",
       country: item.acf?.country || "",
       brandDescription: item.acf?.brand_description || "",
-      productLines: item.acf?.product_lines_json ? JSON.parse(item.acf.product_lines_json) : [],
-      img: item._embedded?.["wp:featuredmedia"]?.[0]?.source_url || "https://via.placeholder.com/300x300",
+      productLines: item.acf?.product_lines_json
+        ? JSON.parse(item.acf.product_lines_json)
+        : [],
+      img:
+        item._embedded?.["wp:featuredmedia"]?.[0]?.source_url ||
+        "https://via.placeholder.com/300x300",
     }));
   } catch (error) {
     console.error("❌ Error in fetchBrands:", error);
@@ -337,9 +365,15 @@ export async function fetchServices() {
       title: item.title?.rendered || "Untitled",
       description: cleanWPContent(item.content?.rendered) || "",
       icon: item.acf?.icon || "Settings",
-      features: item.acf?.features_json ? JSON.parse(item.acf.features_json) : [],
-      industries: item.acf?.industries_json ? JSON.parse(item.acf.industries_json) : [],
-      img: item._embedded?.["wp:featuredmedia"]?.[0]?.source_url || "https://via.placeholder.com/900x500",
+      features: item.acf?.features_json
+        ? JSON.parse(item.acf.features_json)
+        : [],
+      industries: item.acf?.industries_json
+        ? JSON.parse(item.acf.industries_json)
+        : [],
+      img:
+        item._embedded?.["wp:featuredmedia"]?.[0]?.source_url ||
+        "https://via.placeholder.com/900x500",
     }));
   } catch (error) {
     console.error("❌ Error in fetchServices:", error);
@@ -362,12 +396,12 @@ export async function checkAPIHealth() {
     const response = await fetch(`${WORDPRESS_URL}/wp-json/wp/v2/`, {
       signal: AbortSignal.timeout(5000),
       headers: {
-        'Accept': 'application/json',
-      }
+        Accept: "application/json",
+      },
     });
     return response.ok;
   } catch (error) {
-    console.error('❌ API health check failed:', error);
+    console.error("❌ API health check failed:", error);
     return false;
   }
 }
