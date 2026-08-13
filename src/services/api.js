@@ -335,20 +335,11 @@ export async function fetchNewsById(id) {
 
 export async function fetchBrands() {
   try {
-    const brands = await fetchFromWP("brand?_embed&per_page=100", 2);
+    const brands = await fetchFromWP("brands?per_page=100", 2);
     if (!brands || brands.length === 0) return [];
     return brands.map((item) => ({
       id: item.slug || item.id.toString(),
-      name: item.title?.rendered || "Untitled",
-      description: cleanWPContent(item.content?.rendered) || "",
-      country: item.acf?.country || "",
-      brandDescription: item.acf?.brand_description || "",
-      productLines: item.acf?.product_lines_json
-        ? JSON.parse(item.acf.product_lines_json)
-        : [],
-      img:
-        item._embedded?.["wp:featuredmedia"]?.[0]?.source_url ||
-        "https://via.placeholder.com/300x300",
+      name: item.name || "Untitled",
     }));
   } catch (error) {
     console.error("❌ Error in fetchBrands:", error);
