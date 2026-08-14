@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
+  ChevronLeft,
+  ChevronRight,
   Zap,
   Sun,
   Package,
@@ -52,6 +54,45 @@ export default function Home() {
   const [quickInquirySubmitted, setQuickInquirySubmitted] = useState(false);
   const [quickInquirySubmitting, setQuickInquirySubmitting] = useState(false);
   const [quickInquiryError, setQuickInquiryError] = useState(null);
+
+  // ─── Services Strip Scroll-Arrow State ─────────────────────────
+  const servicesScrollRef = useRef(null);
+  const [canScrollServicesLeft, setCanScrollServicesLeft] = useState(false);
+  const [canScrollServicesRight, setCanScrollServicesRight] = useState(false);
+
+  const updateServicesScrollButtons = () => {
+    const el = servicesScrollRef.current;
+    if (!el) return;
+    setCanScrollServicesLeft(el.scrollLeft > 4);
+    setCanScrollServicesRight(
+      el.scrollLeft + el.clientWidth < el.scrollWidth - 4,
+    );
+  };
+
+  const scrollServicesByAmount = (dir) => {
+    const el = servicesScrollRef.current;
+    if (!el) return;
+
+    const maxScrollLeft = el.scrollWidth - el.clientWidth;
+    const step = el.clientWidth * 0.6;
+    const target = el.scrollLeft + dir * step;
+    const clampedTarget = Math.max(0, Math.min(target, maxScrollLeft));
+
+    el.scrollTo({ left: clampedTarget, behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    updateServicesScrollButtons();
+    const el = servicesScrollRef.current;
+    if (!el) return;
+
+    el.addEventListener("scroll", updateServicesScrollButtons);
+    window.addEventListener("resize", updateServicesScrollButtons);
+    return () => {
+      el.removeEventListener("scroll", updateServicesScrollButtons);
+      window.removeEventListener("resize", updateServicesScrollButtons);
+    };
+  }, [loading]);
 
   useEffect(() => {
     async function loadData() {
@@ -300,31 +341,65 @@ export default function Home() {
           </div>
 
           {/* Horizontal Scroll (smaller screens) */}
-          <div className="lg:hidden overflow-x-auto py-4 -mx-4 px-4 scrollbar-hide">
-            <div className="flex gap-4 min-w-max">
-              {services.map((s, i) => (
-                <Link
-                  to="/services"
-                  key={s.label}
-                  className="group flex flex-col items-center gap-2 p-4 rounded-xl transition-all duration-300 bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-amber/50 hover:scale-105 hover:shadow-lg min-w-[140px]"
-                >
-                  <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 group-hover:bg-amber group-hover:text-deep-navy"
-                    style={{
-                      background: i === 0 ? "#F5A800" : "rgba(255,255,255,0.1)",
-                      color: i === 0 ? "#0F1A2E" : "#F5A800",
-                    }}
+          <div className="lg:hidden relative">
+            <button
+              type="button"
+              onClick={() => scrollServicesByAmount(-1)}
+              aria-label="Scroll services left"
+              className={`absolute left-1 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full flex items-center justify-center bg-amber text-deep-navy shadow-lg shadow-black/20 hover:scale-110 active:scale-95 transition-all duration-300 ${
+                canScrollServicesLeft
+                  ? "opacity-100 pointer-events-auto"
+                  : "opacity-0 pointer-events-none"
+              }`}
+            >
+              <ChevronLeft size={18} strokeWidth={2.5} />
+            </button>
+
+            {/* Right Arrow – always in DOM, fades in/out */}
+            <button
+              type="button"
+              onClick={() => scrollServicesByAmount(1)}
+              aria-label="Scroll services right"
+              className={`absolute right-1 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full flex items-center justify-center bg-amber text-deep-navy shadow-lg shadow-black/20 hover:scale-110 active:scale-95 transition-all duration-300 ${
+                canScrollServicesRight
+                  ? "opacity-100 pointer-events-auto"
+                  : "opacity-0 pointer-events-none"
+              }`}
+            >
+              <ChevronRight size={18} strokeWidth={2.5} />
+            </button>
+
+            {/* Scroll container – unchanged */}
+            <div
+              ref={servicesScrollRef}
+              className="overflow-x-auto py-4 -mx-4 px-4 scrollbar-hide"
+            >
+              <div className="flex gap-4 min-w-max">
+                {services.map((s, i) => (
+                  <Link
+                    to="/services"
+                    key={s.label}
+                    className="group flex flex-col items-center gap-2 p-4 rounded-xl transition-all duration-300 bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-amber/50 hover:scale-105 hover:shadow-lg min-w-[140px]"
                   >
-                    {getIcon(s.icon, 18)}
-                  </div>
-                  <span className="text-xs font-semibold font-barlow text-center text-white/90 group-hover:text-amber transition-colors">
-                    {s.label}
-                  </span>
-                  <span className="text-amber opacity-0 group-hover:opacity-100 transition-all duration-300 -mt-1">
-                    <ArrowRight size={14} />
-                  </span>
-                </Link>
-              ))}
+                    <div
+                      className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 group-hover:bg-amber group-hover:text-deep-navy"
+                      style={{
+                        background:
+                          i === 0 ? "#F5A800" : "rgba(255,255,255,0.1)",
+                        color: i === 0 ? "#0F1A2E" : "#F5A800",
+                      }}
+                    >
+                      {getIcon(s.icon, 18)}
+                    </div>
+                    <span className="text-xs font-semibold font-barlow text-center text-white/90 group-hover:text-amber transition-colors">
+                      {s.label}
+                    </span>
+                    <span className="text-amber opacity-0 group-hover:opacity-100 transition-all duration-300 -mt-1">
+                      <ArrowRight size={14} />
+                    </span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
 

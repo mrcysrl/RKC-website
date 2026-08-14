@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
+  ChevronLeft,
+  ChevronRight,
   CheckCircle,
   Settings,
   Sun,
@@ -16,7 +18,6 @@ import { PageHero } from "../components/Layout";
 import { SERVICES } from "../data";
 
 // ─── Icon Mapping ───────────────────────────────────────────────
-
 const ICON_MAP = {
   Settings: Settings,
   Sun: Sun,
@@ -26,20 +27,57 @@ const ICON_MAP = {
   Battery: Battery,
   ClipboardCheck: ClipboardCheck,
 };
-
 const getIcon = (iconName, size = 18) => {
   const Icon = ICON_MAP[iconName];
   return Icon ? <Icon size={size} /> : null;
 };
 
 // ─── Component ──────────────────────────────────────────────────
-
 export default function Services() {
   const [activeTab, setActiveTab] = useState(SERVICES[0].id);
   const [isFading, setIsFading] = useState(false);
   const activeService = SERVICES.find((s) => s.id === activeTab);
   const tabRefs = useRef({});
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+
+  // ── Scroll-arrow state ──
+  const scrollRef = useRef(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateScrollButtons = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 4);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  };
+
+  const scrollByAmount = (dir) => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const maxScrollLeft = el.scrollWidth - el.clientWidth;
+    const step = el.clientWidth * 0.6;
+    const target = el.scrollLeft + dir * step;
+
+    // Clamp so we never stop short of/past the actual edge
+    const clampedTarget = Math.max(0, Math.min(target, maxScrollLeft));
+
+    el.scrollTo({ left: clampedTarget, behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    updateScrollButtons();
+    const el = scrollRef.current;
+    if (!el) return;
+
+    el.addEventListener("scroll", updateScrollButtons);
+    window.addEventListener("resize", updateScrollButtons);
+    return () => {
+      el.removeEventListener("scroll", updateScrollButtons);
+      window.removeEventListener("resize", updateScrollButtons);
+    };
+  }, []);
 
   // Update indicator position when active tab changes
   useEffect(() => {
@@ -48,6 +86,8 @@ export default function Services() {
       const { offsetLeft, offsetWidth } = activeElement;
       setIndicatorStyle({ left: offsetLeft, width: offsetWidth });
     }
+    // Recheck arrow visibility whenever content/layout could shift
+    updateScrollButtons();
   }, [activeTab]);
 
   const handleTabChange = (id) => {
@@ -67,12 +107,42 @@ export default function Services() {
         title="Our Services"
         subtitle="Comprehensive automation, renewable energy, and industrial supply services — delivered by certified Philippine engineers."
       />
-
       <section className="py-0 bg-off-white">
         {/* ── Sticky Tab Navigation ── */}
-        <div className="sticky top-20 z-40 bg-steel-blue shadow-lg">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="relative flex overflow-x-auto scrollbar-hide gap-0">
+        <div className="sticky top-16 md:top-20 z-40 bg-steel-blue shadow-lg">
+          <div className="max-w-7xl mx-auto relative">
+            {/* Left arrow – always rendered, fades in/out */}
+            <button
+              type="button"
+              onClick={() => scrollByAmount(-1)}
+              aria-label="Scroll tabs left"
+              className={`absolute left-0 top-0 bottom-0 z-10 flex items-center px-2 bg-gradient-to-r from-steel-blue to-transparent text-white/80 hover:text-amber transition-all duration-300 ${
+                canScrollLeft
+                  ? "opacity-100 pointer-events-auto"
+                  : "opacity-0 pointer-events-none"
+              }`}
+            >
+              <ChevronLeft size={20} />
+            </button>
+
+            {/* Right arrow – always rendered, fades in/out */}
+            <button
+              type="button"
+              onClick={() => scrollByAmount(1)}
+              aria-label="Scroll tabs right"
+              className={`absolute right-0 top-0 bottom-0 z-10 flex items-center px-2 bg-gradient-to-l from-steel-blue to-transparent text-white/80 hover:text-amber transition-all duration-300 ${
+                canScrollRight
+                  ? "opacity-100 pointer-events-auto"
+                  : "opacity-0 pointer-events-none"
+              }`}
+            >
+              <ChevronRight size={20} />
+            </button>
+
+            <div
+              ref={scrollRef}
+              className="relative flex overflow-x-auto scrollbar-hide gap-0"
+            >
               {/* Sliding Indicator */}
               <div
                 className="absolute bottom-0 h-0.5 bg-amber transition-all duration-300 ease-in-out"
@@ -81,7 +151,6 @@ export default function Services() {
                   width: indicatorStyle.width,
                 }}
               />
-
               {SERVICES.map((service) => (
                 <button
                   key={service.id}

@@ -85,13 +85,13 @@ const Navbar = () => {
           
           {/* Left: Logo / Company Name */}
           <div className="flex-shrink-0">
-            <Link to="/" className="flex items-center gap-3" onClick={closeMenu}>
+            <Link to="/" className="flex items-center gap-3 md:gap-2" lg:gap-3 onClick={closeMenu}>
               <img
                 src={logo}
                 alt="RKC Industrial Supply"
                 className="h-10 w-auto object-contain"
               />
-              <div className="hidden sm:block">
+              <div className="">
                 <span className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight font-barlow-condensed">
                   RKC<span className="text-amber"> Industrial</span>
                 </span>
@@ -167,19 +167,6 @@ const Navbar = () => {
           }`}
         >
           <div className="pb-4 pt-2 border-t border-white/10 flex flex-col gap-1">
-            {/* Mobile Logo */}
-            <div className="px-3 py-2 flex items-center gap-3">
-              <img
-                src={logo}
-                alt="RKC Industrial Supply"
-                className="h-8 w-auto object-contain"
-              />
-              <span className="font-barlow-condensed text-lg font-bold text-white">
-                RKC<span className="text-amber"> Industrial</span>
-              </span>
-            </div>
-            <div className="h-px bg-white/10 my-1" />
-
             {navLinks.map((link) => (
               <Link
                 key={link.to}
@@ -200,7 +187,7 @@ const Navbar = () => {
 
             {/* Phone Number (Mobile) */}
             <div className="px-3 py-2 font-barlow text-sm text-off-white">
-              📞 +63 2 8888-1234
+              📞 +63 919 098 4958
             </div>
 
             {/* RFQ Button (Mobile) */}
