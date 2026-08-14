@@ -2,8 +2,11 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Search, ChevronRight, SlidersHorizontal, X } from "lucide-react";
-import { fetchProducts, fetchBrands } from "../services/api";
-import { CATEGORIES } from "../data";
+import {
+  fetchProducts,
+  fetchBrands,
+  fetchProductCategories,
+} from "../services/api";
 import { PageHero } from "../components/Layout";
 import ProductCard from "../components/ui/ProductCard";
 
@@ -11,6 +14,7 @@ export default function Products() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [brandOptions, setBrandOptions] = useState(["All Brands"]);
+  const [categoryOptions, setCategoryOptions] = useState(["All"]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -66,6 +70,22 @@ export default function Products() {
       }
     };
     loadBrands();
+  }, []);
+
+  // Fetch product categories from WordPress (for filter buttons)
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const data = await fetchProductCategories();
+        if (data && data.length > 0) {
+          setCategoryOptions(["All", ...data.map((c) => c.name)]);
+        }
+      } catch (err) {
+        console.error("❌ Error loading categories:", err);
+        // categoryOptions stays at its ["All"] default on failure
+      }
+    };
+    loadCategories();
   }, []);
 
   // Apply filters and sorting
@@ -229,7 +249,7 @@ export default function Products() {
 
           {/* Category & Brand filters */}
           <div className="flex flex-wrap gap-2 mb-4">
-            {CATEGORIES.map((c) => (
+            {categoryOptions.map((c) => (
               <button
                 key={c}
                 onClick={() => setCategory(c)}

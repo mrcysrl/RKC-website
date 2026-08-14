@@ -375,7 +375,11 @@ export async function fetchServices() {
 export async function fetchProductCategories() {
   try {
     const data = await fetchFromWP("product_category?per_page=100", 2);
-    return data || [];
+    if (!data || data.length === 0) return [];
+    return data.map((item) => ({
+      id: item.slug || item.id.toString(),
+      name: item.name || "Untitled",
+    }));
   } catch (error) {
     console.error("❌ Error fetching product categories:", error);
     return [];
