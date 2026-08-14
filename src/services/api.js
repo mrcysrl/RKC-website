@@ -6,6 +6,10 @@ import { MOCK_PRODUCTS, MOCK_NEWS } from "../data/index.js";
 // In production: uses empty string for relative URLs (Vercel proxy handles it)
 const WORDPRESS_URL = import.meta.env.DEV ? "https://rkcindustrialph.com" : "";
 
+// ─── IN-MEMORY CACHE (brands/categories rarely change; avoid refetching on every page visit) ──
+let _brandsCache = null;
+let _categoriesCache = null;
+
 // ─── BADGE MAPPING ─────────────────────────────────────────────
 
 const BADGE_MAP = {
@@ -334,13 +338,16 @@ export async function fetchNewsById(id) {
 }
 
 export async function fetchBrands() {
+  if (_brandsCache) return _brandsCache;
   try {
     const brands = await fetchFromWP("brands?per_page=100", 2);
     if (!brands || brands.length === 0) return [];
-    return brands.map((item) => ({
+    const mapped = brands.map((item) => ({
       id: item.slug || item.id.toString(),
       name: item.name || "Untitled",
     }));
+    _brandsCache = mapped;
+    return mapped;
   } catch (error) {
     console.error("❌ Error in fetchBrands:", error);
     return [];
@@ -373,13 +380,16 @@ export async function fetchServices() {
 }
 
 export async function fetchProductCategories() {
+  if (_categoriesCache) return _categoriesCache;
   try {
     const data = await fetchFromWP("product_category?per_page=100", 2);
     if (!data || data.length === 0) return [];
-    return data.map((item) => ({
+    const mapped = data.map((item) => ({
       id: item.slug || item.id.toString(),
       name: item.name || "Untitled",
     }));
+    _categoriesCache = mapped;
+    return mapped;
   } catch (error) {
     console.error("❌ Error fetching product categories:", error);
     return [];

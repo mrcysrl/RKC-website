@@ -25,15 +25,15 @@ export default function Products() {
   const [page, setPage] = useState(1);
   const perPage = 6;
 
-  // Fetch products from WordPress
+  // Fetch products, then brands, then categories — sequentially, not in parallel,
+  // to avoid tripping the host's rate limit with a burst of simultaneous requests.
   useEffect(() => {
-    const loadProducts = async () => {
+    const loadAll = async () => {
       try {
         setLoading(true);
         const data = await fetchProducts();
         console.log("📦 Products data received:", data);
 
-        // Debug: Log all unique categories
         const uniqueCategories = [...new Set(data.map((p) => p.category))];
         console.log("🏷️ Unique categories in products:", uniqueCategories);
 
@@ -52,40 +52,26 @@ export default function Products() {
       } finally {
         setLoading(false);
       }
-    };
-    loadProducts();
-  }, []);
 
-  // Fetch brands from WordPress (for filter buttons)
-  useEffect(() => {
-    const loadBrands = async () => {
       try {
-        const data = await fetchBrands();
-        if (data && data.length > 0) {
-          setBrandOptions(["All Brands", ...data.map((b) => b.name)]);
+        const brandData = await fetchBrands();
+        if (brandData && brandData.length > 0) {
+          setBrandOptions(["All Brands", ...brandData.map((b) => b.name)]);
         }
       } catch (err) {
         console.error("❌ Error loading brands:", err);
-        // brandOptions stays at its ["All Brands"] default on failure
       }
-    };
-    loadBrands();
-  }, []);
 
-  // Fetch product categories from WordPress (for filter buttons)
-  useEffect(() => {
-    const loadCategories = async () => {
       try {
-        const data = await fetchProductCategories();
-        if (data && data.length > 0) {
-          setCategoryOptions(["All", ...data.map((c) => c.name)]);
+        const categoryData = await fetchProductCategories();
+        if (categoryData && categoryData.length > 0) {
+          setCategoryOptions(["All", ...categoryData.map((c) => c.name)]);
         }
       } catch (err) {
         console.error("❌ Error loading categories:", err);
-        // categoryOptions stays at its ["All"] default on failure
       }
     };
-    loadCategories();
+    loadAll();
   }, []);
 
   // Apply filters and sorting
